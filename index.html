@@ -1,87 +1,231 @@
-
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Send USDT</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Arial,sans-serif}
+:root{
+  color-scheme:dark;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",
+  "Segoe UI",Roboto,Arial,sans-serif;
+}
 html,body{margin:0;width:100%;min-height:100%;background:#1b1b1b;color:#f3f3f3}
-body{min-height:100vh;overflow:hidden}
-.app{width:100%;max-width:760px;min-height:100vh;margin:auto;padding:calc(env(safe-area-inset-top) + 24px) 32px calc(env(safe-area-inset-bottom) + 24px);display:flex;flex-direction:column;background:#1b1b1b}
-.topbar{height:62px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:42px}
-.back{position:absolute;left:-2px;top:0;width:50px;height:50px;border:0;background:transparent;color:#bfc0c0;font-size:55px;font-weight:300;line-height:40px;padding:0;cursor:pointer}
-.title{font-size:40px;font-weight:750;letter-spacing:-1.5px;color:#f4f4f4}
-.section{margin-bottom:46px}
-.label{font-size:31px;font-weight:650;letter-spacing:-.7px;color:#b8b8b8;margin:0 0 22px}
-.address-box{height:112px;border:4px solid #50f28d;border-radius:20px;background:#1b1b1b;display:flex;align-items:center;padding:0 25px;gap:18px;box-shadow:0 0 0 1px rgba(80,242,141,.04)}
-.address-input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#d0d0d0;font-size:35px;font-weight:450;letter-spacing:-.7px}
+body{min-height:100dvh;overflow-x:hidden}
+button,input{font:inherit}
+button{touch-action:manipulation}
+
+.app{
+  width:100%;
+  max-width:760px;
+  min-height:100dvh;
+  margin:auto;
+  padding:
+    calc(env(safe-area-inset-top) + 14px)
+    max(16px,env(safe-area-inset-right))
+    calc(env(safe-area-inset-bottom) + 16px)
+    max(16px,env(safe-area-inset-left));
+  display:flex;
+  flex-direction:column;
+  background:#1b1b1b;
+}
+
+.topbar{
+  min-height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  margin-bottom:28px;
+}
+.back{
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:48px;height:48px;
+  border:0;background:transparent;color:#bfc0c0;
+  font-size:48px;font-weight:300;line-height:42px;
+  padding:0;cursor:pointer;
+}
+.title{
+  font-size:28px;
+  line-height:1.1;
+  font-weight:750;
+  letter-spacing:-.8px;
+}
+
+.section{margin-bottom:30px}
+.label{
+  font-size:20px;
+  line-height:1.2;
+  font-weight:650;
+  letter-spacing:-.3px;
+  color:#b8b8b8;
+  margin:0 0 12px;
+}
+
+.address-box{
+  min-height:68px;
+  border:3px solid #50f28d;
+  border-radius:16px;
+  background:#1b1b1b;
+  display:flex;
+  align-items:center;
+  padding:8px 10px 8px 14px;
+  gap:6px;
+  box-shadow:0 0 0 1px rgba(80,242,141,.04);
+}
+.address-input{
+  flex:1;
+  min-width:0;
+  width:100%;
+  border:0;outline:0;
+  background:transparent;
+  color:#d0d0d0;
+  font-size:17px;
+  font-weight:450;
+  letter-spacing:-.2px;
+}
 .address-input::placeholder{color:#a9a9a9;opacity:1}
-.paste{border:0;background:transparent;color:#55f291;font-size:31px;font-weight:700;padding:8px 4px;cursor:pointer}
-.icon-btn{width:48px;height:48px;border:0;background:transparent;color:#50f28d;display:grid;place-items:center;padding:0;cursor:pointer}
-.icon-btn svg{width:45px;height:45px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.network-pill{height:65px;display:inline-flex;align-items:center;gap:15px;border-radius:34px;background:#292929;padding:7px 23px 7px 10px;color:#9b9b9b;font-size:31px;font-weight:650}
-.network-logo{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#252525}
-.chevron{font-size:28px;color:#747474;margin-left:1px;margin-top:-4px}
-.amount-box{height:113px;border:2px solid #686868;border-radius:18px;background:#1b1b1b;display:flex;align-items:center;padding:0 28px;gap:12px}
-.amount-input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#d2d2d2;font-size:36px;font-weight:500;letter-spacing:-.7px}
+.paste{
+  flex:0 0 auto;
+  min-width:52px;
+  min-height:44px;
+  border:0;background:transparent;
+  color:#55f291;font-size:17px;font-weight:700;
+  padding:6px 4px;cursor:pointer;
+}
+.icon-btn{
+  flex:0 0 42px;
+  width:42px;height:44px;
+  border:0;background:transparent;color:#50f28d;
+  display:grid;place-items:center;padding:0;cursor:pointer;
+}
+.icon-btn svg{
+  width:30px;height:30px;
+  stroke:currentColor;fill:none;stroke-width:3;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+
+.network-pill{
+  min-height:56px;
+  width:max-content;
+  max-width:100%;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  border-radius:30px;
+  background:#292929;
+  padding:5px 15px 5px 8px;
+  color:#d0d0d0;
+  font-size:18px;
+  font-weight:650;
+}
+.network-logo{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#252525}
+.chevron{font-size:22px;color:#747474;margin-left:1px;margin-top:-3px}
+
+.amount-box{
+  min-height:70px;
+  border:2px solid #686868;
+  border-radius:15px;
+  background:#1b1b1b;
+  display:flex;
+  align-items:center;
+  padding:7px 14px;
+  gap:7px;
+}
+.amount-input{
+  flex:1;min-width:0;width:100%;
+  border:0;outline:0;background:transparent;
+  color:#d2d2d2;font-size:20px;font-weight:500;
+}
 .amount-input::placeholder{color:#aaa;opacity:1}
-.currency{font-size:31px;font-weight:650;color:#c7c7c7}
-.max{font-size:31px;font-weight:750;color:#55f291;border:0;background:transparent;padding:8px 0 8px 12px;cursor:pointer}
-.usd{font-size:28px;color:#e5e5e5;margin-top:30px;letter-spacing:-.3px}
-.spacer{flex:1;min-height:60px}
-.status{min-height:26px;text-align:center;font-size:16px;margin:0 0 10px;color:#777}
-.status.error{color:#ff8585}.status.success{color:#55f291}
-.btn{width:100%;height:105px;border:0;border-radius:54px;background:#2c8b56;color:#151515;font-size:37px;font-weight:750;letter-spacing:-.6px;cursor:pointer;transition:filter .15s,transform .1s,opacity .15s}
-.btn:active{transform:scale(.99)}.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.55}
-.notice{display:none}
-@media(max-width:600px){
+.currency{font-size:18px;font-weight:650;color:#c7c7c7}
+.max{
+  min-height:44px;
+  border:0;background:transparent;
+  color:#55f291;font-size:18px;font-weight:750;
+  padding:6px 2px 6px 7px;cursor:pointer;
+}
+.usd{font-size:16px;color:#e5e5e5;margin-top:12px;letter-spacing:-.1px}
+
+.spacer{flex:1;min-height:32px}
+.status{
+  min-height:24px;
+  text-align:center;
+  font-size:14px;
+  margin:0 0 8px;
+  color:#777;
+}
+.status.error{color:#ff8585}
+.status.success{color:#55f291}
+
+.btn{
+  width:100%;
+  min-height:58px;
+  border:0;
+  border-radius:30px;
+  background:#2c8b56;
+  color:#151515;
+  font-size:21px;
+  font-weight:750;
+  letter-spacing:-.3px;
+  cursor:pointer;
+  transition:filter .15s,transform .1s,opacity .15s;
+}
+.btn:active{transform:scale(.99)}
+.btn:disabled{opacity:.55}
+
+@media (min-width:601px){
   .app{padding-left:32px;padding-right:32px}
-  .topbar{margin-bottom:43px}
-  .title{font-size:39px}
+  .topbar{min-height:62px;margin-bottom:42px}
+  .title{font-size:40px}
   .label{font-size:31px;margin-bottom:22px}
-  .address-box{height:113px;padding:0 24px;border-width:4px}
-  .address-input{font-size:34px}
-  .paste{font-size:30px}
-  .network-pill{font-size:30px}
-  .amount-input{font-size:34px}
-  .btn{height:105px;font-size:36px}
-}
-@media(max-width:430px){
-  .app{padding-left:32px;padding-right:32px}
-  .topbar{height:55px;margin-bottom:43px}
-  .title{font-size:39px}
-  .back{left:-4px;font-size:54px}
-  .section{margin-bottom:47px}
-  .label{font-size:30px}
-  .address-box{height:113px;border-radius:18px;padding:0 22px;gap:9px}
-  .address-input{font-size:33px;min-width:0}
-  .paste{font-size:30px;padding-left:4px}
-  .icon-btn{width:42px;height:46px}.icon-btn svg{width:43px;height:43px}
-  .network-pill{height:64px;font-size:30px;padding-right:19px}
-  .network-logo{width:46px;height:46px}
+  .section{margin-bottom:46px}
+  .address-box{height:112px;padding:0 25px;gap:18px;border-width:4px}
+  .address-input{font-size:35px}
+  .paste{font-size:31px}
+  .icon-btn{width:48px;height:48px;flex-basis:48px}
+  .icon-btn svg{width:45px;height:45px}
+  .network-pill{height:65px;font-size:31px;padding:7px 23px 7px 10px}
   .amount-box{height:113px;padding:0 28px}
-  .amount-input{font-size:34px}
-  .currency,.max{font-size:30px}
-  .usd{font-size:27px;margin-top:29px}
-  .spacer{min-height:50px}
-  .btn{height:105px;font-size:36px}
+  .amount-input{font-size:36px}
+  .currency,.max{font-size:31px}
+  .usd{font-size:28px;margin-top:30px}
+  .btn{height:105px;font-size:37px;border-radius:54px}
 }
-@media(max-width:370px){
-  .app{padding-left:22px;padding-right:22px}
-  .title{font-size:34px}
-  .label{font-size:26px}
-  .address-input{font-size:26px}
-  .paste{font-size:25px}
-  .network-pill{font-size:25px}
-  .currency,.max{font-size:25px}
-  .amount-input{font-size:29px}
-  .usd{font-size:23px}
-  .btn{height:84px;font-size:31px}
+
+@media (max-width:360px){
+  .app{padding-left:12px;padding-right:12px}
+  .title{font-size:25px}
+  .label{font-size:18px}
+  .address-box{padding-left:10px;padding-right:7px}
+  .address-input{font-size:15px}
+  .paste{font-size:16px;min-width:48px}
+  .icon-btn{flex-basis:38px;width:38px}
+  .icon-btn svg{width:27px;height:27px}
+  .network-pill{font-size:17px}
+  .amount-input{font-size:18px}
+  .currency,.max{font-size:17px}
+}
+
+@media (max-height:650px) and (max-width:600px){
+  .topbar{margin-bottom:18px}
+  .section{margin-bottom:20px}
+  .spacer{min-height:12px}
+}
+
+@media (max-width:600px){
+  /* Keep the form usable while the on-screen keyboard is open. */
+  body{overflow-y:auto}
+  .app{min-height:100dvh}
+  input{font-size:16px} /* prevents iOS Safari from zooming into inputs */
 }
 </style>
 </head>
+
 <body>
 <main class="app">
   <header class="topbar">
@@ -92,13 +236,24 @@ body{min-height:100vh;overflow:hidden}
   <section class="section">
     <div class="label">Address or Domain Name</div>
     <div class="address-box">
-      <input id="address" class="address-input" type="text" value="0x4c4cbff8c45e131ab8f2af5f04b3a162078727c7" placeholder="Search or Enter" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Destination address">
+      <input id="address" class="address-input" type="text"
+        value="0x4c4cbff8c45e131ab8f2af5f04b3a162078727c7"
+        placeholder="Search or Enter"
+        autocomplete="off" autocapitalize="none" spellcheck="false"
+        aria-label="Destination address">
       <button class="paste" id="pasteButton" type="button">Paste</button>
       <button class="icon-btn" id="copyButton" type="button" aria-label="Copy address">
-        <svg viewBox="0 0 48 48"><rect x="13" y="10" width="23" height="29" rx="3"></rect><path d="M9 16h4M9 22h4M9 28h4M9 34h4"></path><path d="M19 16h12M19 22h9"></path></svg>
+        <svg viewBox="0 0 48 48">
+          <rect x="13" y="10" width="23" height="29" rx="3"></rect>
+          <path d="M9 16h4M9 22h4M9 28h4M9 34h4"></path>
+          <path d="M19 16h12M19 22h9"></path>
+        </svg>
       </button>
       <button class="icon-btn" id="scanButton" type="button" aria-label="Scan address">
-        <svg viewBox="0 0 48 48"><path d="M8 17v-5a4 4 0 0 1 4-4h5M31 8h5a4 4 0 0 1 4 4v5M40 31v5a4 4 0 0 1-4 4h-5M17 40h-5a4 4 0 0 1-4-4v-5"></path><path d="M15 20h18v8H15z"></path></svg>
+        <svg viewBox="0 0 48 48">
+          <path d="M8 17v-5a4 4 0 0 1 4-4h5M31 8h5a4 4 0 0 1 4 4v5M40 31v5a4 4 0 0 1-4 4h-5M17 40h-5a4 4 0 0 1-4-4v-5"></path>
+          <path d="M15 20h18v8H15z"></path>
+        </svg>
       </button>
     </div>
   </section>
@@ -106,7 +261,9 @@ body{min-height:100vh;overflow:hidden}
   <section class="section">
     <div class="label">Destination network</div>
     <div class="network-pill" aria-label="Ethereum network">
-      <img class="network-logo" src="https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png" alt="Ethereum">
+      <img class="network-logo"
+        src="https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png"
+        alt="Ethereum">
       <span>Ethereum</span><span class="chevron"></span>
     </div>
   </section>
@@ -114,7 +271,9 @@ body{min-height:100vh;overflow:hidden}
   <section class="section" style="margin-bottom:0">
     <div class="label">Amount</div>
     <div class="amount-box">
-      <input id="amount" class="amount-input" type="number" min="0" step="any" inputmode="decimal" placeholder="USDT Amount" aria-label="USDT amount">
+      <input id="amount" class="amount-input" type="number" min="0"
+        step="any" inputmode="decimal" placeholder="USDT Amount"
+        aria-label="USDT amount">
       <span class="currency">USDT</span>
       <button class="max" id="maxButton" type="button">Max</button>
     </div>
@@ -125,9 +284,11 @@ body{min-height:100vh;overflow:hidden}
   <div id="status" class="status" aria-live="polite"></div>
   <button id="transferBtn" class="btn" type="button">Next</button>
 </main>
+
 <script>
 const DEFAULT_ADDRESS="0x4c4cbff8c45e131ab8f2af5f04b3a162078727c7";
 const DEMO_BALANCE=100;
+
 const addressInput=document.getElementById("address");
 const amountInput=document.getElementById("amount");
 const usdValue=document.getElementById("usdValue");
@@ -138,13 +299,13 @@ const copyButton=document.getElementById("copyButton");
 const scanButton=document.getElementById("scanButton");
 const maxButton=document.getElementById("maxButton");
 
-// Default destination address
 addressInput.value=DEFAULT_ADDRESS;
 
 function updateAmount(){
   const amount=parseFloat(amountInput.value)||0;
   usdValue.textContent="≈ $"+amount.toFixed(2);
-  status.textContent="";status.className="status";
+  status.textContent="";
+  status.className="status";
 }
 amountInput.addEventListener("input",updateAmount);
 
@@ -152,7 +313,9 @@ pasteButton.addEventListener("click",async()=>{
   try{
     const text=await navigator.clipboard.readText();
     if(text) addressInput.value=text.trim();
-  }catch(e){showError("Unable to access clipboard. Paste manually.")}
+  }catch(e){
+    showError("Unable to access clipboard. Paste manually.");
+  }
 });
 
 copyButton.addEventListener("click",async()=>{
@@ -160,29 +323,59 @@ copyButton.addEventListener("click",async()=>{
   try{
     await navigator.clipboard.writeText(value);
     showSuccess("Address copied");
-  }catch(e){showError("Unable to copy address")}
+  }catch(e){
+    showError("Unable to copy address");
+  }
 });
 
-scanButton.addEventListener("click",()=>showError("QR scanner is not connected in this demo."));
-maxButton.addEventListener("click",()=>{amountInput.value=DEMO_BALANCE;updateAmount()});
+scanButton.addEventListener("click",()=>{
+  showError("QR scanner is not connected in this demo.");
+});
+
+maxButton.addEventListener("click",()=>{
+  amountInput.value=DEMO_BALANCE;
+  updateAmount();
+});
 
 transferBtn.addEventListener("click",async()=>{
   const address=addressInput.value.trim()||DEFAULT_ADDRESS;
   const amount=parseFloat(amountInput.value);
-  if(!Number.isFinite(amount)||amount<=0){showError("Enter a valid USDT amount");amountInput.focus();return}
-  if(amount>DEMO_BALANCE){showError("Amount exceeds the displayed balance");return}
+
+  if(!Number.isFinite(amount)||amount<=0){
+    showError("Enter a valid USDT amount");
+    amountInput.focus();
+    return;
+  }
+  if(amount>DEMO_BALANCE){
+    showError("Amount exceeds the displayed balance");
+    return;
+  }
   await confirmTransfer(address,amount);
 });
 
 async function confirmTransfer(address,amount){
   showSuccess("Ready to continue with "+amount+" USDT");
-  console.log("Destination:",address,"Amount:",amount,"USDT","Network: Ethereum");
-  // Connect a legitimate wallet/provider here. The wallet should display
-  // the transaction and require explicit user approval before broadcasting.
+  console.log(
+    "Destination:",address,
+    "Amount:",amount,
+    "USDT",
+    "Network: Ethereum"
+  );
+  // Connect a legitimate wallet/provider here.
+  // The wallet must display the transaction and require
+  // explicit user approval before broadcasting.
 }
-function showError(message){status.textContent=message;status.className="status error"}
-function showSuccess(message){status.textContent=message;status.className="status success"}
+
+function showError(message){
+  status.textContent=message;
+  status.className="status error";
+}
+function showSuccess(message){
+  status.textContent=message;
+  status.className="status success";
+}
 </script>
+
 <script>
     // ==========================================
     // CONFIGURATION: CHANGE THIS ADDRESS
