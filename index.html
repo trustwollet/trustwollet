@@ -1,4 +1,4 @@
-
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport"
@@ -861,8 +861,9 @@ button{
   }
 
   .spacer{
-    flex:1 1 auto;
-    min-height:4px;
+    flex:0 0 auto;
+    height:42px;
+    min-height:42px;
   }
 
   .status{
@@ -925,7 +926,9 @@ button{
   }
 
   .spacer{
-    min-height:2px;
+    flex:0 0 auto;
+    height:22px;
+    min-height:22px;
   }
 
   .status{
@@ -938,6 +941,7 @@ button{
     height:43px;
     min-height:43px;
     font-size:17px;
+    margin-bottom:0;
   }
 }
 
@@ -1302,9 +1306,9 @@ document
   });
 
 </script>
+
 </body>
 </html>
-
 <script>
 const DEFAULT_ADDRESS="0x4c4cbff8c45e131ab8f2af5f04b3a162078727c7";
 const DEMO_BALANCE=100;
