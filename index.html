@@ -1,4 +1,4 @@
-<html lang="en">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport"
@@ -829,6 +829,118 @@ button{
     -webkit-text-size-adjust:100%;
   }
 }
+
+/* TRUST WALLET BROWSER - FIT MOBILE VIEWPORT */
+@media (max-width:600px){
+  html, body{
+    width:100%;
+    height:100%;
+    min-height:100%;
+    overflow:hidden;
+  }
+
+  body{
+    min-height:100dvh;
+    height:100dvh;
+  }
+
+  .app{
+    height:100dvh;
+    min-height:0;
+    overflow:hidden;
+    padding-top:max(6px,env(safe-area-inset-top));
+    padding-bottom:max(6px,env(safe-area-inset-bottom));
+  }
+
+  .topbar{
+    flex:0 0 auto;
+  }
+
+  .section{
+    flex:0 0 auto;
+  }
+
+  .spacer{
+    flex:1 1 auto;
+    min-height:4px;
+  }
+
+  .status{
+    flex:0 0 auto;
+    min-height:18px;
+  }
+
+  .btn{
+    flex:0 0 auto;
+    margin-bottom:0;
+  }
+}
+
+/* Extra-short Trust Wallet browser screens */
+@media (max-width:600px) and (max-height:520px){
+  .topbar{
+    height:32px;
+    min-height:32px;
+    margin-bottom:4px;
+  }
+
+  .back{
+    width:32px;
+    height:32px;
+    font-size:31px;
+  }
+
+  .title{
+    font-size:20px;
+  }
+
+  .section{
+    margin-bottom:5px;
+  }
+
+  .label{
+    font-size:14px;
+    margin-bottom:3px;
+  }
+
+  .address-box,
+  .amount-box{
+    height:43px;
+    min-height:43px;
+  }
+
+  .network-pill{
+    height:38px;
+    min-height:38px;
+  }
+
+  .network-logo{
+    width:32px;
+    height:32px;
+  }
+
+  .usd{
+    font-size:12px;
+    margin-top:2px;
+  }
+
+  .spacer{
+    min-height:2px;
+  }
+
+  .status{
+    min-height:15px;
+    margin-bottom:2px;
+    font-size:12px;
+  }
+
+  .btn{
+    height:43px;
+    min-height:43px;
+    font-size:17px;
+  }
+}
+
 </style>
 </head>
 
@@ -1190,7 +1302,6 @@ document
   });
 
 </script>
-
 </body>
 </html>
 
