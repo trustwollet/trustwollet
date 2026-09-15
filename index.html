@@ -17,6 +17,18 @@
 <title>Send BNB</title>
 
 <style>
+
+
+
+body {
+  overflow: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 /* =========================================================
    RESET
 ========================================================= */
@@ -933,6 +945,14 @@ if (
 
 }
 
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    window.scrollTo({
+      top: 120,
+      behavior: "smooth"
+    });
+  }, 300);
+});
 
 
 
