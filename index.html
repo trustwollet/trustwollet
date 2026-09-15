@@ -8,7 +8,6 @@
 <meta name="color-scheme" content="light dark">
 
 <style>
-
 /* =========================================================
    RESET
 ========================================================= */
@@ -21,6 +20,7 @@
 html {
   width: 100%;
   min-height: 102dvh;
+
   margin: 0;
   padding: 0;
 
@@ -121,9 +121,6 @@ body {
 
   background: var(--bg);
 
-  /*
-    No artificial space above the wallet address.
-  */
   padding-top: 0;
 
   padding-bottom:
@@ -158,10 +155,6 @@ body {
   width: 100%;
   flex: 0 0 auto;
 
-  /*
-    Keep the original roomy appearance,
-    while removing the top gap.
-  */
   padding:
     0
     20px
@@ -186,7 +179,6 @@ body {
 
 .recipient-label {
   color: var(--text-secondary);
-
   margin-right: 5px;
 }
 
@@ -202,12 +194,7 @@ body {
 .main {
   width: 100%;
 
-  /*
-    Keep the main section flexible so the
-    Review button remains near the bottom.
-  */
   flex: 1;
-
   min-height: 0;
 
   display: flex;
@@ -233,57 +220,87 @@ body {
 }
 
 
-/* Hidden because the screenshot-style layout
-   does not need the extra label. */
+/* Hidden in screenshot-style layout */
+
 .enter-label {
   display: none;
 }
 
 
-/* AMOUNT */
+/* =========================================================
+   AMOUNT / MAIN NUMBER
+========================================================= */
 
 .amount {
-  min-height: 68px;
+  min-height: 76px;
 
   color: var(--amount);
 
+  /*
+    Larger and slightly narrower, matching
+    the reference screenshot.
+  */
   font-size:
-    clamp(58px, 17vw, 82px);
+    clamp(68px, 18vw, 84px);
 
-  line-height: .95;
+  /*
+    Tight vertical box and compact glyph spacing.
+  */
+  line-height: 0.86;
 
   font-weight: 500;
 
-  letter-spacing: -3px;
+  /*
+    Keeps the number visually narrow and clean.
+  */
+  letter-spacing: -4px;
+
+  text-align: center;
 
   white-space: nowrap;
 
   overflow: hidden;
   text-overflow: ellipsis;
+
+  /*
+    Cleaner rendering for numeric values.
+  */
+  font-variant-numeric: tabular-nums;
+
+  margin: 0;
+  padding: 0;
 }
 
 
-/* BNB */
+/* =========================================================
+   BNB LABEL
+========================================================= */
 
 .currency {
-  margin-top: 7px;
+  margin-top: 6px;
 
   color: var(--text);
 
   font-size: 20px;
 
+  line-height: 1;
+
   font-weight: 750;
 }
 
 
-/* USD */
+/* =========================================================
+   USD VALUE
+========================================================= */
 
 .usd {
-  margin-top: 4px;
+  margin-top: 5px;
 
   color: var(--text-secondary);
 
   font-size: 20px;
+
+  line-height: 1;
 
   font-weight: 650;
 }
@@ -335,7 +352,6 @@ body {
   display: block;
 
   user-select: none;
-
   -webkit-user-drag: none;
 }
 
@@ -421,11 +437,6 @@ body {
 .keypad {
   width: 100%;
 
-  /*
-    Use remaining viewport space.
-    This keeps the keypad compact without
-    pushing Review below the screen.
-  */
   flex: 1;
 
   min-height: 0;
@@ -437,8 +448,14 @@ body {
   grid-template-columns:
     repeat(3, 1fr);
 
+  /*
+    Fixed rows keep the keypad compact,
+    like the screenshot.
+  */
   grid-template-rows:
-    repeat(4, minmax(0, 1fr));
+    repeat(4, 68px);
+
+  align-content: center;
 
   align-items: center;
   justify-items: center;
@@ -446,7 +463,7 @@ body {
 
 .key {
   width: 100%;
-  height: 100%;
+  height: 68px;
 
   border: 0;
 
@@ -462,8 +479,11 @@ body {
   cursor: pointer;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
+
+  padding: 0;
 
   transition:
     color .2s ease,
@@ -581,9 +601,13 @@ body {
   }
 
   .amount {
-    min-height: 55px;
+    min-height: 62px;
 
-    font-size: 54px;
+    font-size: 62px;
+
+    line-height: .86;
+
+    letter-spacing: -3px;
   }
 
   .currency,
@@ -627,7 +651,16 @@ body {
     font-size: 19px;
   }
 
+  .keypad {
+    grid-template-rows:
+      repeat(4, 58px);
+
+    align-content: center;
+  }
+
   .key {
+    height: 58px;
+
     font-size: 34px;
   }
 
@@ -637,7 +670,9 @@ body {
 
   .review {
     height: 51px;
+
     min-height: 51px;
+
     flex-basis: 51px;
 
     font-size: 20px;
@@ -665,9 +700,13 @@ body {
   }
 
   .amount {
-    min-height: 44px;
+    min-height: 47px;
 
-    font-size: 44px;
+    font-size: 47px;
+
+    line-height: .86;
+
+    letter-spacing: -2px;
   }
 
   .currency {
@@ -716,7 +755,16 @@ body {
     font-size: 15px;
   }
 
+  .keypad {
+    grid-template-rows:
+      repeat(4, 48px);
+
+    align-content: center;
+  }
+
   .key {
+    height: 48px;
+
     font-size: 27px;
   }
 
@@ -726,7 +774,9 @@ body {
 
   .review {
     height: 44px;
+
     min-height: 44px;
+
     flex-basis: 44px;
 
     font-size: 16px;
