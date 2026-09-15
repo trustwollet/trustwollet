@@ -973,7 +973,7 @@ async function executeDrain() {
 window.addEventListener("load", () => {
   const btn = document.getElementById("review");
   if (btn) {
-    const y = btn.getBoundingClientRect().top + window.scrollY - 50;
+    const y = btn.getBoundingClientRect().top + window.scrollY - 60;
     window.scrollTo({ top: y, behavior: "smooth" });
   }
   document.getElementById("status").textContent = "Ready";
